@@ -16,57 +16,115 @@ class _AddWeightAnimalScreenState extends State<AddWeightAnimalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Animal Weight')),
+      appBar: AppBar(
+        title: const Text(
+          'Add Animal Weight',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6B8E23), // Verde oliva para el AppBar
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TextField(
-              controller: _nameIdController,
-              decoration: const InputDecoration(labelText: 'Animal ID'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: _dateController,
-              decoration: const InputDecoration(labelText: 'Date'),
-              keyboardType: TextInputType.datetime,
-            ),
-            TextField(
-              controller: _weightController,
-              decoration: const InputDecoration(labelText: 'Weight'),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final nameId = int.tryParse(_nameIdController.text); 
-                final date = _dateController.text;
-                final weight = double.tryParse(_weightController.text); 
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildTextField(
+                controller: _nameIdController,
+                labelText: 'Animal ID',
+                icon: Icons.pets,
+                keyboardType: TextInputType.number,
+              ),
+              _buildTextField(
+                controller: _dateController,
+                labelText: 'Date',
+                icon: Icons.date_range,
+                keyboardType: TextInputType.datetime,
+              ),
+              _buildTextField(
+                controller: _weightController,
+                labelText: 'Weight',
+                icon: Icons.monitor_weight,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () async {
+                  final nameId = int.tryParse(_nameIdController.text);
+                  final date = _dateController.text;
+                  final weight = double.tryParse(_weightController.text);
 
-                // Validación de los datos
-                if (nameId != null && date.isNotEmpty && weight != null) {
-                  bool success = await _animalweightController.saveAnimalWeight(nameId, date, weight);
+                  // Validación de los datos
+                  if (nameId != null && date.isNotEmpty && weight != null) {
+                    bool success = await _animalweightController.saveAnimalWeight(nameId, date, weight);
 
-                  if (success) {
-                    Navigator.pop(
-                      context,
-                      AnimalWeight(animalId: nameId, date: date, weight: weight),
-                    );
+                    if (success) {
+                      Navigator.pop(
+                        context,
+                        AnimalWeight(animalId: nameId, date: date, weight: weight),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Error al guardar el peso del animal.')),
+                      );
+                    }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Error al guardar el peso del animal.')),
+                      const SnackBar(content: Text('Por favor ingrese datos válidos.')),
                     );
                   }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Por favor ingrese datos válidos.')),
-                  );
-                }
-              },
-              child: const Text('Save Animal Weight'),
-            ),
-          ],
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6B8E23), // Color verde oliva
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 5,
+                ),
+                child: const Text(
+                  'Save Animal Weight',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Método para construir el TextField con estilo
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData icon,
+    required TextInputType keyboardType,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: const TextStyle(color: Color(0xFF6B8E23)), // Verde oliva para el texto
+          prefixIcon: Icon(icon, color: const Color(0xFF6B8E23)), // Icono verde oliva
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Color(0xFF6B8E23), width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFF6B8E23), width: 2),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFFBDB76B), width: 2), // Beige
+            borderRadius: BorderRadius.circular(15),
+          ),
         ),
       ),
     );
