@@ -1,4 +1,7 @@
-import 'package:ecuaranch/model/create_animal.dart';
+import 'package:ecuaranch/controllers/get_animals_list_controller.dart';
+import 'package:ecuaranch/dto/animalDto.dart';
+import 'package:ecuaranch/views/dashboard/list_animals_pregnancies.dart';
+import 'package:ecuaranch/views/dashboard/list_animals_weight.dart';
 import 'package:flutter/material.dart';
 
 class AnimalListScreen extends StatefulWidget {
@@ -9,7 +12,22 @@ class AnimalListScreen extends StatefulWidget {
 }
 
 class _AnimalListScreenState extends State<AnimalListScreen> {
-  List<Animal> animals = [];  
+  List<AnimalDTO> animals = [];
+  final GetAnimalsController _getAnimalsController = GetAnimalsController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAnimals();
+  }
+
+  // Fetch the list of animals from the controller
+  Future<void> _fetchAnimals() async {
+    await _getAnimalsController.getListAnimals();
+    setState(() {
+      animals = _getAnimalsController.animals; 
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +40,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
             fontSize: 24,
           ),
         ),
-        backgroundColor: const Color(0xFF6B8E23), 
+        backgroundColor: const Color(0xFF6B8E23),
       ),
       body: animals.isEmpty
           ? const Center(child: Text('No animals added yet!'))
@@ -38,7 +56,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                   ),
                   child: ListTile(
                     leading: const Icon(
-                      Icons.pets, 
+                      Icons.pets,
                       color: Color(0xFF6B8E23),
                     ),
                     title: Text(
@@ -53,38 +71,48 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                       children: [
                         Text('Species: ${animal.specie}', style: const TextStyle(fontSize: 14)),
                         const SizedBox(height: 4),
-                        // Puedes agregar más detalles, como la edad o el peso
-                        Text('Age: ${animal.name} years', style: const TextStyle(fontSize: 14)),
+                        // Puedes agregar más detalles, como la edad
+                        Text('Age: ${animal.specie} years', style: const TextStyle(fontSize: 14)),
                       ],
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        setState(() {
-                          animals.removeAt(index); // Eliminar el animal de la lista
-                        });
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        if (value == 'viewPregnancies') {
+                          // Navegar a la vista de embarazos
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PregnanciesScreen(animalId: animal.id),
+                            ),
+                          );
+                        } else if (value == 'viewWeight') {
+                          // Navegar a la vista de peso
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WeightScreen(animalId: animal.id),
+                            ),
+                          );
+                        }
                       },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem<String>(
+                          value: 'viewPregnancies',
+                          child: Text('View Pregnancies'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'viewWeight',
+                          child: Text('View Weight'),
+                        ),
+                      ],
                     ),
                     onTap: () {
-                      // Puedes agregar una acción al hacer tap, por ejemplo, ir a una pantalla de detalles
+                      // Puedes agregar cualquier otra acción al hacer tap
                     },
                   ),
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/add').then((newAnimal) {
-            if (newAnimal != null) {
-              setState(() {
-                animals.add(newAnimal as Animal);
-              });
-            }
-          });
-        },
-        backgroundColor: const Color(0xFF6B8E23),
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }
