@@ -1,0 +1,25 @@
+{
+  "login":{
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "dont_have_account": "Don't have an account? Register"
+  },
+  "register":{
+    "email": "Email",
+    "password": "Password",
+    "confirmpassword": "Confirm Password",
+    "register": "Register",
+    "alredyhaveaccount":" Already have an account? Login"
+  },
+  "dashboard":{
+    "dashboard": "Dashboard",
+    "menu": "Menu",
+    "addAnimal": "Add Animal",
+    "addAnimalWeight": "Add Animal Weight",
+    "addAnimalPregnancy": "Add Animal Pregnancy",
+    "listAnimals":"Animals List",
+    "logout":"Logout"
+  }
+}
+  

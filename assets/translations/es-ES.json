@@ -1,0 +1,25 @@
+{
+    "login": {
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "login": "Iniciar sesión",
+      "dont_have_account": "¿No tienes una cuenta? Regístrate"
+    },
+    "register": {
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "confirmpassword": "Confirmar contraseña",
+      "register": "Registrarse",
+      "alredyhaveaccount": "¿Ya tienes una cuenta? Iniciar sesión"
+    },
+    "dashboard": {
+      "dashboard": "Tablero",
+      "menu": "Menú",
+      "addAnimal": "Añadir animal",
+      "addAnimalWeight": "Añadir peso del animal",
+      "addAnimalPregnancy": "Añadir embarazo del animal",
+      "listAnimals": "Lista de animales",
+      "logout": "Cerrar sesión"
+      }
+  }
+  

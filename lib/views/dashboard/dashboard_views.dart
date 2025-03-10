@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';  // Asegúrate de importar easy_localization
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -7,14 +8,14 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Dashboard',
-          style: TextStyle(
+        title: Text(
+          'dashboard.dashboard'.tr(),  // Traducción de "Dashboard"
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
           ),
         ),
-        backgroundColor: Color(0xFF6B8E23), // Verde oliva para el AppBar
+        backgroundColor: const Color(0xFF6B8E23), // Verde oliva para el AppBar
       ),
       drawer: Drawer(
         child: Container(
@@ -33,7 +34,7 @@ class DashboardScreen extends StatelessWidget {
                   color: Color(0xFF6B8E23), // Fondo verde para el encabezado
                 ),
                 child: Text(
-                  'Menu',
+                  'Menu', 
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -43,9 +44,9 @@ class DashboardScreen extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.add_circle, color: Colors.white),
-                title: const Text(
-                  'Add Animal',
-                  style: TextStyle(color: Colors.white),
+                title: Text(
+                  'dashboard.addAnimal'.tr(),  // Traducción de "Add Animal"
+                  style: const TextStyle(color: Colors.white),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -54,9 +55,9 @@ class DashboardScreen extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.add_chart, color: Colors.white),
-                title: const Text(
-                  'Add Animal - Weight',
-                  style: TextStyle(color: Colors.white),
+                title: Text(
+                  'dashboard.addAnimalWeight'.tr(),  // Traducción de "Add Animal - Weight"
+                  style: const TextStyle(color: Colors.white),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -65,9 +66,9 @@ class DashboardScreen extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.pregnant_woman, color: Colors.white),
-                title: const Text(
-                  'Add Animal - Pregnancy',
-                  style: TextStyle(color: Colors.white),
+                title: Text(
+                  'dashboard.addAnimalPregnancy'.tr(),  // Traducción de "Add Animal - Pregnancy"
+                  style: const TextStyle(color: Colors.white),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -76,9 +77,9 @@ class DashboardScreen extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.list, color: Colors.white),
-                title: const Text(
-                  'List the Animals',
-                  style: TextStyle(color: Colors.white),
+                title: Text(
+                  'dashboard.listAnimals'.tr(),  // Traducción de "List the Animals"
+                  style: const TextStyle(color: Colors.white),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -87,9 +88,9 @@ class DashboardScreen extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.white),
-                title: const Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.white),
+                title: Text(
+                  'dashboard.logout'.tr(),  // Traducción de "Logout"
+                  style: const TextStyle(color: Colors.white),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -121,7 +122,7 @@ class DashboardScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Welcome to the Dashboard!',
+                  'dashboard.welcome',  // Traducción de "Welcome to the Dashboard!"
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,

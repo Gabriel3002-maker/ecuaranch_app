@@ -12,7 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  http: ^1.3.0  # Dependencia para realizar solicitudes HTTP
+  http: ^1.3.0 
+  easy_localization: ^3.0.7+1
+
 
 dev_dependencies:
   flutter_test:
@@ -25,6 +27,8 @@ flutter:
   assets:
     - assets/images/campo_ganadero.png
     - assets/images/logoecuabyte.png
+    - assets/translations/
+
 
 
   #   - images/a_dot_ham.jpeg
