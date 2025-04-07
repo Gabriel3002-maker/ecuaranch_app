@@ -1,118 +1,81 @@
+import 'package:ecuaranch/controllers/auth/auth_controller.dart';
+import 'package:ecuaranch/views/dashboard/dashboard_views.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';  
+import 'package:provider/provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
-
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/campo_ganadero.png',  
-              fit: BoxFit.cover,
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.5), 
-            ),
-          ),
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/images/logoecuabyte.png', 
-                    height: 120,
-                  ),
-                  const SizedBox(height: 40),
-                  TextField(
-                    style: const TextStyle(color: Colors.white), 
-                    decoration: InputDecoration(
-                      labelText: 'login.email'.tr(),  
-                      labelStyle: const TextStyle(color: Colors.white), 
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF6B8E23), width: 2),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFBDB76B), width: 2), 
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    style: const TextStyle(color: Colors.white), 
-                    obscureText: _obscureText,
-                    decoration: InputDecoration(
-                      labelText: 'login.password'.tr(),  
-                      labelStyle: const TextStyle(color: Colors.white), 
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF6B8E23), width: 2),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFFBDB76B), width: 2), 
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText ? Icons.visibility : Icons.visibility_off,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureText = !_obscureText;
-                          });
+      appBar: AppBar(
+        title: Text("Login - Odoo"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Consumer<UserController>(
+          builder: (context, controller, child) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  decoration: InputDecoration(labelText: 'Usuario'),
+                  onChanged: controller.setUsername,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Contraseña'),
+                  obscureText: true,
+                  onChanged: controller.setPassword,
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: controller.isLoading
+                      ? null
+                      : () async {
+                          // Llamamos al controlador para autenticar al usuario
+                          await controller.fetchUserData();
+
+                          // Si la respuesta es exitosa
+                          if (controller.userData != null &&
+                              controller.userData?['status'] == 'success') {
+                            // Navegar al DashboardScreen
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DashboardScreen(),
+                              ),
+                            );
+                          } else if (controller.errorMessage != null) {
+                            // Si ocurre un error, mostrar un mensaje
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                title: Text("Error"),
+                                content: Text(controller.errorMessage!),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Aceptar"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                         },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  // Botón de Login
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: const Color(0xFF6B8E23), backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/dashboard');
-                    },
-                    child: Text(
-                      'login.login'.tr(), 
-                      style: const TextStyle(fontSize: 18, color: Color(0xFF6B8E23)), 
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/register');
-                    },
-                    child: Text(
-                      'login.dont_have_account'.tr(),  
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 55, 147, 205), 
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                  child: controller.isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text('Iniciar sesión'),
+                ),
+                SizedBox(height: 20),
+                if (controller.isLoading)
+                  Center(child: CircularProgressIndicator()),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

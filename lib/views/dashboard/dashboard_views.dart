@@ -13,123 +13,191 @@ class DashboardScreen extends StatelessWidget {
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
+            color: Colors.white, // Color blanco para el texto
           ),
         ),
         backgroundColor: const Color(0xFF6B8E23), // Verde oliva para el AppBar
       ),
-      drawer: Drawer(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF6B8E23), Color(0xFF98FB98)], // Gradiente de verde
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color(0xFF6B8E23), // Fondo verde para el encabezado
-                ),
-                child: Text(
-                  'Menu', 
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.add_circle, color: Colors.white),
-                title: Text(
-                  'dashboard.addAnimal'.tr(),  // Traducción de "Add Animal"
-                  style: const TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/add-animal');
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.add_chart, color: Colors.white),
-                title: Text(
-                  'dashboard.addAnimalWeight'.tr(),  // Traducción de "Add Animal - Weight"
-                  style: const TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/add-animal-weight');
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.pregnant_woman, color: Colors.white),
-                title: Text(
-                  'dashboard.addAnimalPregnancy'.tr(),  // Traducción de "Add Animal - Pregnancy"
-                  style: const TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/add-animal-pregancy');
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.list, color: Colors.white),
-                title: Text(
-                  'dashboard.listAnimals'.tr(),  // Traducción de "List the Animals"
-                  style: const TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/list-animal');
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout, color: Colors.white),
-                title: Text(
-                  'dashboard.logout'.tr(),  // Traducción de "Logout"
-                  style: const TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
       body: Stack(
         children: [
-          // Fondo con la imagen (cambia el nombre de la imagen según lo tengas)
+          // Imagen de fondo que ocupa toda la pantalla
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/campo_ganadero.png',  // Asegúrate de tener esta imagen en los assets
+            child: FittedBox(
               fit: BoxFit.cover,
+              child: Image.asset(
+                'assets/images/campo_ganadero.png',  // Asegúrate de tener esta imagen en los assets
+                width: MediaQuery.of(context).size.width, // Ajusta el ancho a la pantalla
+                height: MediaQuery.of(context).size.height, // Ajusta la altura a la pantalla
+              ),
             ),
           ),
-          // Fondo oscuro para mejorar la visibilidad del texto
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.5), // Filtro oscuro
-            ),
-          ),
-          // Contenido de la pantalla centrado
-          const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'dashboard.welcome',  // Traducción de "Welcome to the Dashboard!"
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white, // Color blanco para el texto
+          // Contenido centrado en la pantalla
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'dashboard.welcome'.tr(),  // Traducción de "Welcome to the Dashboard!"
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white, // Texto blanco
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 40),
+                  // Contenedor que utiliza el espacio disponible para centrar los botones
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          // Botón "Add Animal"
+                          MouseRegion(
+                            onEnter: (_) {
+                              // Cambia el color cuando el mouse entra en el área
+                              // Aquí lo podrías hacer si tienes un efecto de hover.
+                            },
+                            onExit: (_) {
+                              // Restaura el color cuando el mouse sale del área
+                            },
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/add-animal');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                                backgroundColor: const Color(0xFF6B8E23),
+                                textStyle: const TextStyle(fontSize: 18), // Botón verde
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                'dashboard.addAnimal'.tr(),  // Traducción de "Add Animal"
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          
+                          // Botón "Add Animal Weight"
+                          MouseRegion(
+                            onEnter: (_) {
+                              // Cambiar el color a naranja cuando el mouse pasa por encima
+                            },
+                            onExit: (_) {
+                              // Restaurar el color cuando el mouse sale
+                            },
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/add-animal-weight');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                                backgroundColor: const Color(0xFF6B8E23),
+                                textStyle: const TextStyle(fontSize: 18), // Botón verde
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                'dashboard.addAnimalWeight'.tr(),  // Traducción de "Add Animal Weight"
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          
+                          // Botón "Add Animal Pregnancy"
+                          MouseRegion(
+                            onEnter: (_) {
+                              // Cambiar el color a naranja cuando el mouse pasa por encima
+                            },
+                            onExit: (_) {
+                              // Restaurar el color cuando el mouse sale
+                            },
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/add-animal-pregnancy');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                                backgroundColor: const Color(0xFF6B8E23),
+                                textStyle: const TextStyle(fontSize: 18), // Botón verde
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                'dashboard.addAnimalPregnancy'.tr(),  // Traducción de "Add Animal - Pregnancy"
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          
+                          // Botón "List Animals"
+                          MouseRegion(
+                            onEnter: (_) {
+                              // Cambiar el color a naranja cuando el mouse pasa por encima
+                            },
+                            onExit: (_) {
+                              // Restaurar el color cuando el mouse sale
+                            },
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/list-animal');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                                backgroundColor: const Color(0xFF6B8E23),
+                                textStyle: const TextStyle(fontSize: 18), // Botón verde
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                'dashboard.listAnimals'.tr(),  // Traducción de "List Animals"
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          
+                          // Botón "Logout"
+                          MouseRegion(
+                            onEnter: (_) {
+                              // Cambiar el color a naranja cuando el mouse pasa por encima
+                            },
+                            onExit: (_) {
+                              // Restaurar el color cuando el mouse sale
+                            },
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(context, '/');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                                backgroundColor: const Color(0xFF6B8E23),
+                                textStyle: const TextStyle(fontSize: 18), // Botón verde
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                'dashboard.logout'.tr(),  // Traducción de "Logout"
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

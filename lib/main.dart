@@ -1,12 +1,10 @@
+import 'package:ecuaranch/controllers/auth/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';  // Importa easy_localization
-import 'package:ecuaranch/views/auth/login_views.dart';
-import 'package:ecuaranch/views/auth/register_views.dart';
-import 'package:ecuaranch/views/dashboard/dashboard_views.dart';
-import 'package:ecuaranch/views/dashboard/list_animals_views.dart';
-import 'package:ecuaranch/views/dashboard/register_animals_pregnancy_views.dart';
-import 'package:ecuaranch/views/dashboard/register_animals_views.dart';
-import 'package:ecuaranch/views/dashboard/register_animals_weight_views.dart';
+import 'views/auth/login_views.dart';  // Asegúrate de importar la vista de login
+import 'views/auth/register_views.dart';  // Asegúrate de importar la vista de registro
+import 'views/dashboard/dashboard_views.dart';  // Asegúrate de importar la vista de dashboard
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +15,10 @@ void main() async {
       supportedLocales: const [Locale('en', 'US'), Locale('de', 'DE')],  // Idiomas soportados
       path: 'assets/translations', // Ruta de los archivos de traducción
       fallbackLocale: const Locale('en', 'US'), // Idioma por defecto
-      child: MyApp(),
+      child: ChangeNotifierProvider(  // Proveedor de UserController
+        create: (_) => UserController(),
+        child: MyApp(),
+      ),
     ),
   );
 }
@@ -37,11 +38,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
-        '/add-animal': (context) => AddAnimalScreen(),
-        '/list-animal': (context) => const AnimalListScreen(),
-        '/add-animal-weight': (context) => AddWeightAnimalScreen(),
-        '/add-animal-pregancy': (context) => AddPregnancyAnimalScreen()
+        '/dashboard': (context) => const DashboardScreen()
       },
     );
   }

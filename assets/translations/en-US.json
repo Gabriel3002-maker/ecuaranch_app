@@ -13,6 +13,7 @@
     "alredyhaveaccount":" Already have an account? Login"
   },
   "dashboard":{
+    "welcome":"Welcome",
     "dashboard": "Dashboard",
     "menu": "Menu",
     "addAnimal": "Add Animal",

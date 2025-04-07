@@ -1,143 +1,214 @@
 import 'dart:convert';
-
-import 'package:ecuaranch/dto/animalDto.dart';
-import 'package:ecuaranch/dto/animalPregnaciesDto.dart';
-import 'package:ecuaranch/dto/animalWeightDto.dart';
-import 'package:ecuaranch/settings/settings.dart';
+import 'package:ecuaranch/dto/animalCreateDTO.dart';
+import 'package:ecuaranch/dto/animalCreateFeedingDTO.dart';
+import 'package:ecuaranch/dto/animalCreateGrowthWeightDTO.dart';
+import 'package:ecuaranch/dto/animalCreateHealthMonitoringDTO.dart';
+import 'package:ecuaranch/dto/animalCreateObservationDTO.dart';
+import 'package:ecuaranch/dto/animalCreateProductionDTO.dart';
+import 'package:ecuaranch/dto/animalCreateReproductionFollowUpDTO.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
 
-class AnimalService {
+class OdooService {
+  final String url = "https://ecuaranch-backend.duckdns.org";
 
-  Future<bool> saveAnimal(String name, String specie) async {
-    final String url = '${Config.baseUrl}/animals?name=$name&specie=$specie';
-
+  Future<Map<String, dynamic>> getUserFromOdoo(
+      String db, String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse("$url/get_user_from_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "username": username,
+          "password": password,
+        }),
       );
 
       if (response.statusCode == 200) {
-        return true; 
+        return json.decode(response.body);
       } else {
-        return false; 
+        throw Exception("Error al obtener datos del servidor");
       }
     } catch (e) {
-      debugPrint('Error al hacer la solicitud: $e');
-      return false;
+      throw Exception("Error de conexión: $e");
     }
   }
 
-  Future<bool> saveAnimalWeight(int animalId, String date, double weight) async {
-    final String url = '${Config.baseUrl}/weights?animal_id=$animalId&date=$date&weight=$weight';
-
+  Future<Map<String, dynamic>> getStablesFromOdoo(
+      String db, String userId, String password) async {
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse("$url/get_stables_from_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": userId,
+          "password": password,
+        }),
       );
 
       if (response.statusCode == 200) {
-        return true;  
+        return json.decode(response.body);
       } else {
-        return false; 
+        throw Exception("Error al obtener datos del servidor");
       }
     } catch (e) {
-      debugPrint('Error al hacer la solicitud: $e');
-      return false;
+      throw Exception("Error de conexión: $e");
     }
   }
 
-  Future<bool> saveAnimalPregnancy(int animalId, String inseminationDate, String pregnancyStatus, String expectedBirthDate) async {
-    final String url = '${Config.baseUrl}/pregnancies?animal_id=$animalId&insemination_date=$inseminationDate&pregnancy_status=$pregnancyStatus&expected_birth_date=$expectedBirthDate';
-
+  Future<Map<String, dynamic>> getAnimalsFromOdoo(
+      String db, String userId, String password) async {
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse("$url/get_animals_from_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": userId,
+          "password": password,
+        }),
       );
 
       if (response.statusCode == 200) {
-        return true; // La solicitud fue exitosa
+        return json.decode(response.body);
       } else {
-        return false; // La solicitud no fue exitosa
+        throw Exception("Error al obtener datos del servidor");
       }
     } catch (e) {
-      debugPrint('Error al hacer la solicitud: $e');
-      return false;
+      throw Exception("Error de conexión: $e");
     }
   }
 
-
- Future<List<AnimalDTO>> getAnimals() async {
-    const String url = '${Config.baseUrl}/animals';
-
+  Future<Map<String, dynamic>> createAnimal(AnimalDto animalDto) async {
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.post(
+        Uri.parse("$url/create_animal_in_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(animalDto.toJson()),
+      );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((animal) => AnimalDTO.fromJson(animal)).toList();
+        return json.decode(response.body);
       } else {
-        throw Exception('Failed to load animals');
+        throw Exception("Error al obtener datos del servidor");
       }
     } catch (e) {
-      debugPrint('Error al hacer la solicitud: $e');
-      return [];
+      throw Exception("Error de conexión: $e");
     }
   }
 
-
-  Future<List<AnimalDTO>> getAnimalsById(int animalId) async {
-    final String url = '${Config.baseUrl}/animals/$animalId';
-
+  Future<Map<String, dynamic>> createObservationinAnimal(
+      AnimalObservationDTO animalObservationDto) async {
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.post(
+        Uri.parse("$url/create_observation_in_animal_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(animalObservationDto.toJson()),
+      );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((animal) => AnimalDTO.fromJson(animal)).toList();
+        return json.decode(response.body);
       } else {
-        throw Exception('Failed to load animals');
+        throw Exception("Error al obtener datos del servidor");
       }
     } catch (e) {
-      debugPrint('Error al hacer la solicitud: $e');
-      return [];
+      throw Exception("Error de conexión: $e");
     }
   }
 
-  Future<List<AnimalWeightDTO>> getAnimalsByIdWeight(int animalId) async {
-    final String url = '${Config.baseUrl}/weights/$animalId';
+  Future<Map<String, dynamic>> createHealthMonitoringAnimal(
+      HealthMonitoringAnimalDTO animalHealthMonitoringDto) async {
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.post(
+        Uri.parse("$url/health_monitoring_animal_in_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(animalHealthMonitoringDto.toJson()),
+      );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((animal) => AnimalWeightDTO.fromJson(animal)).toList();
+        return json.decode(response.body);
       } else {
-        throw Exception('Failed to load animals');
+        throw Exception("Error al obtener datos del servidor");
       }
     } catch (e) {
-      debugPrint('Error al hacer la solicitud: $e');
-      return [];
+      throw Exception("Error de conexión: $e");
     }
   }
 
-  
-
-  Future<List<AnimalPregnancyDTO>>  getAnimalsByIdPregnancies(int animalId) async {
-    final String url = '${Config.baseUrl}/pregnancies/$animalId';
-  try {
-      final response = await http.get(Uri.parse(url));
+  Future<Map<String, dynamic>> createGrowthWeightAnimal(
+      CreateGrowthWeightAnimalDTO animalGrowthWeightDto) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/create_growthweight_animal_in_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(animalGrowthWeightDto.toJson()),
+      );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((animal) => AnimalPregnancyDTO.fromJson(animal)).toList();
+        return json.decode(response.body);
       } else {
-        throw Exception('Failed to load animals');
+        throw Exception("Error al obtener datos del servidor");
       }
     } catch (e) {
-      debugPrint('Error al hacer la solicitud: $e');
-      return [];
+      throw Exception("Error de conexión: $e");
     }
   }
 
+  Future<Map<String, dynamic>> createReproductionFollowupAnimal(
+      CreateReproductionFollowUpDTO animalReproductionFollowUpDto) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/create_reproduction_followup_animal_in_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(animalReproductionFollowUpDto.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> createFeedingAnimal(
+      FeedingDTOAnimal animalFeedingDto) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/create_feeding_animal_line"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(animalFeedingDto.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> createProductionAnimal(
+      ProductionDTO animalProductionDto) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/create_production"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(animalProductionDto.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
 }

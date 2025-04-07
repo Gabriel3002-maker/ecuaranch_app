@@ -13,6 +13,7 @@
       "alredyhaveaccount": "¿Ya tienes una cuenta? Iniciar sesión"
     },
     "dashboard": {
+      "welcome":"Bienvenido",
       "dashboard": "Tablero",
       "menu": "Menú",
       "addAnimal": "Añadir animal",
