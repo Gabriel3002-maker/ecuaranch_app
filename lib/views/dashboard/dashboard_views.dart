@@ -64,7 +64,7 @@ class DashboardScreen extends StatelessWidget {
                             },
                             child: ElevatedButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, '/add-animal');
+                                Navigator.pushNamed(context, '/stables');
                               },
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),

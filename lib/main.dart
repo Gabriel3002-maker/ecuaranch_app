@@ -1,4 +1,6 @@
 import 'package:ecuaranch/controllers/auth/auth_controller.dart';
+import 'package:ecuaranch/controllers/dashboard/stables_controller.dart';
+import 'package:ecuaranch/views/dashboard/stables_views.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';  // Importa easy_localization
@@ -15,8 +17,11 @@ void main() async {
       supportedLocales: const [Locale('en', 'US'), Locale('de', 'DE')],  // Idiomas soportados
       path: 'assets/translations', // Ruta de los archivos de traducción
       fallbackLocale: const Locale('en', 'US'), // Idioma por defecto
-      child: ChangeNotifierProvider(  // Proveedor de UserController
-        create: (_) => UserController(),
+      child: MultiProvider(  // Usamos MultiProvider para manejar múltiples proveedores
+        providers: [
+          ChangeNotifierProvider(create: (_) => UserController()),  // Proveedor de UserController
+          ChangeNotifierProvider(create: (_) => StablesController()),  // Proveedor de StablesController
+        ],
         child: MyApp(),
       ),
     ),
@@ -38,7 +43,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/dashboard': (context) => const DashboardScreen()
+        '/dashboard': (context) => const DashboardScreen(),
+        '/stables': (context)=> const StablesView(),
       },
     );
   }
