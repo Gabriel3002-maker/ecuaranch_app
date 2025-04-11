@@ -1,5 +1,9 @@
 import 'package:ecuaranch/controllers/auth/auth_controller.dart';
+import 'package:ecuaranch/controllers/dashboard/animals_controller.dart';
+import 'package:ecuaranch/controllers/dashboard/create_animals_controller.dart';
 import 'package:ecuaranch/controllers/dashboard/stables_controller.dart';
+import 'package:ecuaranch/views/dashboard/animals_views.dart';
+import 'package:ecuaranch/views/dashboard/create_animals_views.dart';
 import 'package:ecuaranch/views/dashboard/stables_views.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +25,8 @@ void main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => UserController()),  // Proveedor de UserController
           ChangeNotifierProvider(create: (_) => StablesController()),  // Proveedor de StablesController
+          ChangeNotifierProvider(create: (_) =>  AnimalsController()),
+          ChangeNotifierProvider(create: (_) => CreateAnimalsController())
         ],
         child: MyApp(),
       ),
@@ -44,7 +50,9 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/dashboard': (context) => const DashboardScreen(),
-        '/stables': (context)=> const StablesView(),
+        '/list-stables': (context)=> const StablesView(),
+        '/list-animals': (context) => const AnimalsView(),
+        '/create-animal': (context) =>  AnimalRegistrationScreen()
       },
     );
   }

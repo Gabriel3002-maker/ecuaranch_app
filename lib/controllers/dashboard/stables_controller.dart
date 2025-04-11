@@ -11,20 +11,19 @@ class StablesController extends ChangeNotifier {
   String userId = '2';
   String password = 'gabriel@nextgensolutions.group';
 
-  // Llamar al método fetchUserData al cargar la vista
   Future<void> fetchUserData() async {
     isLoading = true;
-    notifyListeners();  // Notificamos que estamos cargando
+    notifyListeners();  
 
     try {
       stables = await odooService.getStablesFromOdoo(db, userId, password);
-      errorMessage = '';  // Reseteamos cualquier error
+      errorMessage = '';  
     } catch (e) {
       errorMessage = e.toString();
-      stables = [];  // Limpiamos la lista en caso de error
+      stables = []; 
     } finally {
       isLoading = false;
-      notifyListeners();  // Notificamos que la carga ha terminado
+      notifyListeners();  
     }
   }
 }

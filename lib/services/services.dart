@@ -66,8 +66,7 @@ class OdooService {
     }
   }
 
-
-  Future<Map<String, dynamic>> getAnimalsFromOdoo(
+   Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
       String db, String userId, String password) async {
     try {
       final response = await http.post(
@@ -75,13 +74,22 @@ class OdooService {
         headers: {"Content-Type": "application/json"},
         body: json.encode({
           "db": db,
-          "user_id": userId,
+          "user_id":  int.tryParse(userId) ?? 0,
           "password": password,
         }),
       );
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final Map<String, dynamic> responseBody = json.decode(response.body);
+
+        // Extraer la lista de 'stables' de la respuesta
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> stablesData = responseBody['animals'];  // Aquí obtenemos los estables
+          // Retornamos la lista de estables como una lista de Map<String, dynamic>
+          return List<Map<String, dynamic>>.from(stablesData);
+        } else {
+          throw Exception('Error en la respuesta del servidor: ${responseBody['status']}');
+        }
       } else {
         throw Exception("Error al obtener datos del servidor");
       }
@@ -89,6 +97,7 @@ class OdooService {
       throw Exception("Error de conexión: $e");
     }
   }
+
 
   Future<Map<String, dynamic>> createAnimal(AnimalDto animalDto) async {
     try {
