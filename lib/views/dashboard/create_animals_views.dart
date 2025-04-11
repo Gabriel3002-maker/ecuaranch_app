@@ -7,7 +7,8 @@ class AnimalRegistrationScreen extends StatefulWidget {
   const AnimalRegistrationScreen({super.key});
 
   @override
-  State<AnimalRegistrationScreen> createState() => _AnimalRegistrationScreenState();
+  State<AnimalRegistrationScreen> createState() =>
+      _AnimalRegistrationScreenState();
 }
 
 class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
@@ -29,16 +30,23 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
   final _xStudioUserIdController = TextEditingController();
   final _xStudioValueController = TextEditingController();
 
+  String? _selectedAlimentacion;
+  String? _selectedGenero;
+  String? _selectedDestinadoa;
+  String? _selectedEstadoSalud;
+
   void _nextPage() {
     if (_currentPage < 2) {
-      _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.nextPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
       setState(() => _currentPage++);
     }
   }
 
   void _previousPage() {
     if (_currentPage > 0) {
-      _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.previousPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
       setState(() => _currentPage--);
     }
   }
@@ -53,10 +61,12 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
       xName: _xNameController.text,
       xStudioPartnerId: _xStudioPartnerIdController.text,
       xStudioAlimentacionInicial1: _xStudioAlimentacionInicial1Controller.text,
-      xStudioPesoInicial: double.tryParse(_xStudioPesoInicialController.text) ?? 0.0,
+      xStudioPesoInicial:
+          double.tryParse(_xStudioPesoInicialController.text) ?? 0.0,
       xStudioDateStart: _xStudioDateStartController.text,
       xStudioGenero1: _xStudioGenero1Controller.text,
-      xStudioCharField18c1io38ib86: _xStudioCharField18c1io38ib86Controller.text,
+      xStudioCharField18c1io38ib86:
+          _xStudioCharField18c1io38ib86Controller.text,
       xStudioDestinadoA: _xStudioDestinadoAController.text,
       xStudioEstadoDeSalud1: _xStudioEstadoDeSalud1Controller.text,
       xStudioUserId: _xStudioUserIdController.text,
@@ -66,9 +76,11 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
     await controller.createAnimal(animalDto);
 
     if (controller.errorMessage.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(controller.errorMessage)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(controller.errorMessage)));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Animal registrado exitosamente')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Animal registrado exitosamente')));
       _clearForm();
       Navigator.pop(context);
     }
@@ -89,6 +101,9 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
     _xStudioEstadoDeSalud1Controller.clear();
     _xStudioUserIdController.clear();
     _xStudioValueController.clear();
+    _selectedAlimentacion = null;
+    _selectedGenero = null;
+    setState(() {});
   }
 
   Widget _buildPage(List<Widget> fields) {
@@ -100,7 +115,7 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = const Color(0xFF6B8E23); // Verde oliva
+    const themeColor = Color(0xFF6B8E23); // Verde oliva
 
     return Scaffold(
       appBar: AppBar(
@@ -122,48 +137,162 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     _buildPage([
-                      const Text('Datos de Conexión', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      TextField(controller: _dbController, decoration: const InputDecoration(labelText: 'Base de datos')),
-                      TextField(controller: _userIdController, decoration: const InputDecoration(labelText: 'User ID'), keyboardType: TextInputType.number),
-                      TextField(controller: _passwordController, decoration: const InputDecoration(labelText: 'Contraseña'), obscureText: true),
+                      const Text('Datos del Animal',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      TextField(
+                          controller: _xNameController,
+                          decoration:
+                              const InputDecoration(labelText: 'Nombre')),
+                      TextField(
+                          controller: _xStudioPartnerIdController,
+                          decoration:
+                              const InputDecoration(labelText: 'ID del Socio')),
+
+                      // Dropdown: Alimentación Inicial
+                      DropdownButtonFormField<String>(
+                        value: _selectedAlimentacion,
+                        decoration: const InputDecoration(
+                            labelText: 'Alimentación Inicial'),
+                        items: const [
+                          DropdownMenuItem(
+                              value: 'Leche', child: Text('Leche')),
+                          DropdownMenuItem(
+                              value: 'Pasto',
+                              child: Text('Pasto')),
+                          DropdownMenuItem(
+                              value: 'Balanceado', child: Text('Balanceado')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedAlimentacion = value;
+                            _xStudioAlimentacionInicial1Controller.text =
+                                value!;
+                          });
+                        },
+                      ),
+
+                      TextField(
+                          controller: _xStudioPesoInicialController,
+                          decoration:
+                              const InputDecoration(labelText: 'Peso Inicial'),
+                          keyboardType: TextInputType.number),
+                      TextField(
+                          controller: _xStudioDateStartController,
+                          decoration: const InputDecoration(
+                              labelText: 'Fecha de Inicio')),
+
+                      // Dropdown: Género
+                      DropdownButtonFormField<String>(
+                        value: _selectedGenero,
+                        decoration: const InputDecoration(labelText: 'Género'),
+                        items: const [
+                          DropdownMenuItem(
+                              value: 'Macho', child: Text('Macho')),
+                          DropdownMenuItem(
+                              value: 'Hembra', child: Text('Hembra')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedGenero = value;
+                            _xStudioGenero1Controller.text = value!;
+                          });
+                        },
+                      ),
                     ]),
                     _buildPage([
-                      const Text('Datos del Animal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      TextField(controller: _xNameController, decoration: const InputDecoration(labelText: 'Nombre')),
-                      TextField(controller: _xStudioPartnerIdController, decoration: const InputDecoration(labelText: 'ID del Socio')),
-                      TextField(controller: _xStudioAlimentacionInicial1Controller, decoration: const InputDecoration(labelText: 'Alimentación Inicial')),
-                      TextField(controller: _xStudioPesoInicialController, decoration: const InputDecoration(labelText: 'Peso Inicial'), keyboardType: TextInputType.number),
-                      TextField(controller: _xStudioDateStartController, decoration: const InputDecoration(labelText: 'Fecha de Inicio')),
-                      TextField(controller: _xStudioGenero1Controller, decoration: const InputDecoration(labelText: 'Género')),
-                    ]),
-                    _buildPage([
-                      const Text('Salud y Estado', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      TextField(controller: _xStudioCharField18c1io38ib86Controller, decoration: const InputDecoration(labelText: 'Código de Identificación')),
-                      TextField(controller: _xStudioDestinadoAController, decoration: const InputDecoration(labelText: 'Destinado A')),
-                      TextField(controller: _xStudioEstadoDeSalud1Controller, decoration: const InputDecoration(labelText: 'Estado de Salud')),
-                      TextField(controller: _xStudioUserIdController, decoration: const InputDecoration(labelText: 'ID Usuario')),
-                      TextField(controller: _xStudioValueController, decoration: const InputDecoration(labelText: 'Valor'), keyboardType: TextInputType.number),
+                      const Text('Salud y Estado',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      TextField(
+                          controller: _xStudioCharField18c1io38ib86Controller,
+                          decoration: const InputDecoration(
+                              labelText: 'Código de Identificación')),
+                      DropdownButtonFormField<String>(
+                        value: _selectedDestinadoa,
+                        decoration:
+                            const InputDecoration(labelText: 'Destinado A:'),
+                        items: const [
+                          DropdownMenuItem(
+                              value: 'Leche', child: Text('Leche')),
+                          DropdownMenuItem(
+                              value: 'Carne', child: Text('Carne')),
+                          DropdownMenuItem(
+                              value: 'Semental', child: Text('Semental')),
+                          DropdownMenuItem(
+                              value: 'Reproductora',
+                              child: Text('Reproductora')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedDestinadoa = value;
+                            _xStudioDestinadoAController.text = value!;
+                          });
+                        },
+                      ),
+                      DropdownButtonFormField<String>(
+                        value: _selectedEstadoSalud,
+                        decoration:
+                            const InputDecoration(labelText: 'Estado de Salud'),
+                        items: const [
+                          DropdownMenuItem(
+                              value: 'Optima',
+                              child: Text('Optima')),
+                          DropdownMenuItem(
+                              value: 'Moderado',
+                              child: Text('Moderado')),
+                          DropdownMenuItem(
+                              value: 'Desnutricion',
+                              child: Text('Desnutricion')),
+                          DropdownMenuItem(
+                              value: 'Grave',
+                              child: Text('Grave')),
+                          DropdownMenuItem(
+                              value: 'Recuperacion',
+                              child: Text('Recuperacion')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedEstadoSalud = value;
+                            _xStudioEstadoDeSalud1Controller.text = value!;
+                          });
+                        },
+                      ),
+                      TextField(
+                          controller: _xStudioUserIdController,
+                          decoration:
+                              const InputDecoration(labelText: 'ID Usuario')),
+                      TextField(
+                          controller: _xStudioValueController,
+                          decoration: const InputDecoration(labelText: 'Valor'),
+                          keyboardType: TextInputType.number),
                     ]),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (_currentPage > 0)
                       ElevatedButton(
                         onPressed: _previousPage,
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey),
                         child: const Text('Atrás'),
                       ),
                     controller.isLoading
                         ? const CircularProgressIndicator()
                         : ElevatedButton(
-                            onPressed: _currentPage < 2 ? _nextPage : () => _submitForm(context),
-                            style: ElevatedButton.styleFrom(backgroundColor: themeColor),
-                            child: Text(_currentPage < 2 ? 'Siguiente' : 'Registrar'),
+                            onPressed: _currentPage < 2
+                                ? _nextPage
+                                : () => _submitForm(context),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: themeColor),
+                            child: Text(
+                                _currentPage < 2 ? 'Siguiente' : 'Registrar'),
                           ),
                   ],
                 ),
