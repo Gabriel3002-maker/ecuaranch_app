@@ -1,4 +1,5 @@
 import 'package:ecuaranch/controllers/dashboard/stables_controller.dart';
+import 'package:ecuaranch/views/dashboard/animals_stable_id_views.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -62,7 +63,8 @@ class _StablesViewState extends State<StablesView> {
                   final stable = controller.stables[index];
                   final name = stable['x_name'] ?? 'Sin nombre';
                   final description =
-                      stable['x_studio_related_field_80n_1io3dj80a'] ?? 'Sin descripción';
+                      stable['x_studio_related_field_80n_1io3dj80a'] ??
+                          'Sin descripción';
 
                   return Card(
                     elevation: 4,
@@ -70,25 +72,61 @@ class _StablesViewState extends State<StablesView> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: themeColor,
-                        child: Icon(Icons.home, color: Colors.white),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: CircleAvatar(
+                              backgroundColor: themeColor,
+                              child:
+                                  const Icon(Icons.home, color: Colors.white),
+                            ),
+                            title: Text(
+                              name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            subtitle: Text(
+                              description,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: themeColor,
+                              ),
+                              onPressed: () {
+                                final stableId = stable['id'] ?? 0;
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => AnimalsByStableView(
+                                      stableId: stableId,
+                                      db: 'ecuaRanch', // reemplaza según tu flujo
+                                      userId:
+                                          2, // puedes obtenerlo de AuthProvider
+                                      password: 'gabriel@nextgensolutions.group', 
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text("Ver animales asignados"),
+                            ),
+                          ),
+                        ],
                       ),
-                      title: Text(
-                        name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      subtitle: Text(
-                        description,
-                        style: const TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
-                      onTap: () {
-                        // Aquí puedes abrir detalles del establo o lo que necesites
-                      },
                     ),
                   );
                 },

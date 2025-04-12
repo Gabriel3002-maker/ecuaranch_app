@@ -34,39 +34,123 @@ class OdooService {
     }
   }
 
+
   Future<List<Map<String, dynamic>>> getStablesFromOdoo(
-      String db, String userId, String password) async {
+    String db, String userId, String password,
+    {int offset = 0, int limit = 10}) async {
+  try {
+    final response = await http.post(
+      Uri.parse("$url/get_stables_from_odoo"),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({
+        "db": db,
+        "user_id": int.tryParse(userId) ?? 0,
+        "password": password,
+        "offset": offset,
+        "limit": limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+
+      if (responseBody['status'] == 'success') {
+        final List<dynamic> stablesData = responseBody['animals'];
+        return List<Map<String, dynamic>>.from(stablesData);
+      } else {
+        throw Exception('Error en la respuesta del servidor: ${responseBody['status']}');
+      }
+    } else {
+      throw Exception("Error al obtener datos del servidor");
+    }
+  } catch (e) {
+    throw Exception("Error de conexión: $e");
+  }
+}
+
+Future<List<Map<String, dynamic>>> getAnimalsByStableIdFromOdoo({
+  required String db,
+  required int userId,
+  required String password,
+  required int stableId,
+  int offset = 0,
+  int limit = 10,
+}) async {
+
+  try {
+    final response = await http.post(
+      Uri.parse('$url/get_animals_by_stable_id'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'db': db,
+        'user_id': userId,
+        'password': password,
+        'stable_id': stableId,
+        'offset': offset,
+        'limit': limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+
+      if (responseBody['status'] == 'success') {
+        final List<dynamic> animalsData = responseBody['animals'];
+        return List<Map<String, dynamic>>.from(animalsData);
+      } else {
+        throw Exception('Error en la respuesta del servidor: ${responseBody['status']}');
+      }
+    } else {
+      throw Exception('Error al obtener datos del servidor: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('Error de conexión: $e');
+  }
+}
+
+
+  Future<Map<String, dynamic>> getAnimalDetailsById({
+    required String db,
+    required int userId,
+    required String password,
+    required int animalId,
+    int offset = 0,
+    int limit = 10,
+  }) async {
     try {
       final response = await http.post(
-        Uri.parse("$url/get_stables_from_odoo"),
-        headers: {"Content-Type": "application/json"},
+        Uri.parse('$url/get_information_animal_id'),
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          "db": db,
-          "user_id":  int.tryParse(userId) ?? 0,
-          "password": password,
+          'db': db,
+          'user_id': userId,
+          'password': password,
+          'animal_id': animalId,
+          'offset': offset,
+          'limit': limit,
         }),
       );
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseBody = json.decode(response.body);
-
-        // Extraer la lista de 'stables' de la respuesta
         if (responseBody['status'] == 'success') {
-          final List<dynamic> stablesData = responseBody['stables'];  // Aquí obtenemos los estables
-          // Retornamos la lista de estables como una lista de Map<String, dynamic>
-          return List<Map<String, dynamic>>.from(stablesData);
+          return responseBody['animals'][0];
         } else {
-          throw Exception('Error en la respuesta del servidor: ${responseBody['status']}');
+          throw Exception('Error en la respuesta del servidor');
         }
       } else {
-        throw Exception("Error al obtener datos del servidor");
+        throw Exception('Error al obtener los detalles del animal');
       }
     } catch (e) {
-      throw Exception("Error de conexión: $e");
+      throw Exception('Error de conexión: $e');
     }
   }
 
-   Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
+
+
+Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
       String db, String userId, String password) async {
     try {
       final response = await http.post(
@@ -97,6 +181,178 @@ class OdooService {
       throw Exception("Error de conexión: $e");
     }
   }
+
+  Future<Map<String, dynamic>> fetchAnimalHistoryObservation({
+    required String db,
+    required int userId,
+    required String password,
+    required int animalId,
+    int offset = 0,
+    int limit = 10,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$url/get_information_animal_id_observation'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'db': db,
+        'user_id': userId,
+        'password': password,
+        'animal_id': animalId,
+        'offset': offset,
+        'limit': limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Error al cargar el histórico del animal - Observation');
+    }
+  }
+
+
+  Future<Map<String, dynamic>> fetchAnimalHistoryHealth({
+    required String db,
+    required int userId,
+    required String password,
+    required int animalId,
+    int offset = 0,
+    int limit = 10,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$url/get_information_animal_id_health'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'db': db,
+        'user_id': userId,
+        'password': password,
+        'animal_id': animalId,
+        'offset': offset,
+        'limit': limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Error al cargar el histórico del animal - health');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchAnimalHistoryGrow({
+    required String db,
+    required int userId,
+    required String password,
+    required int animalId,
+    int offset = 0,
+    int limit = 10,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$url/get_information_animal_id_grow'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'db': db,
+        'user_id': userId,
+        'password': password,
+        'animal_id': animalId,
+        'offset': offset,
+        'limit': limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Error al cargar el histórico del animal - Grow');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchAnimalHistoryReproductionFollow({
+    required String db,
+    required int userId,
+    required String password,
+    required int animalId,
+    int offset = 0,
+    int limit = 10,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$url/get_information_animal_id_reproductionFollow'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'db': db,
+        'user_id': userId,
+        'password': password,
+        'animal_id': animalId,
+        'offset': offset,
+        'limit': limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Error al cargar el histórico del animal - Reproduction Follow');
+    }
+  }
+
+
+  Future<Map<String, dynamic>> fetchAnimalHistoryFeeding({
+    required String db,
+    required int userId,
+    required String password,
+    required int animalId,
+    int offset = 0,
+    int limit = 10,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$url/get_information_animal_id_feeding'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'db': db,
+        'user_id': userId,
+        'password': password,
+        'animal_id': animalId,
+        'offset': offset,
+        'limit': limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Error al cargar el histórico del animal - Feeding');
+    }
+  }
+
+
+  Future<Map<String, dynamic>> fetchAnimalHistoryProduction({
+    required String db,
+    required int userId,
+    required String password,
+    required int animalId,
+    int offset = 0,
+    int limit = 10,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$url/get_information_animal_id_reproduction'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'db': db,
+        'user_id': userId,
+        'password': password,
+        'animal_id': animalId,
+        'offset': offset,
+        'limit': limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Error al cargar el histórico del animal - Reproduction');
+    }
+  }
+
 
 
   Future<Map<String, dynamic>> createAnimal(AnimalDto animalDto) async {

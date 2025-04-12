@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => const DashboardScreen(),
         '/list-stables': (context)=> const StablesView(),
         '/list-animals': (context) => const AnimalsView(),
-        '/create-animal': (context) =>  AnimalRegistrationScreen()
+        '/create-animal': (context) =>  const AnimalRegistrationScreen()
       },
     );
   }
