@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:ecuaranch/controllers/dashboard/animals_stable_id_controller.dart';
+import 'package:ecuaranch/views/dashboard/addRegisters/register_info_views.dart';
 import 'package:ecuaranch/views/dashboard/animal_detail_by_id_views.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -113,27 +114,45 @@ class AnimalsByStableView extends StatelessWidget {
                           ),
                           isThreeLine: true,
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: themeColor,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AnimalDetailByIdView(
-                                    animalId: animal['id'], 
-                                    db: db,
-                                    userId: userId,
-                                    password: password,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: themeColor,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AnimalDetailByIdView(
+                                      animalId: animalId,
+                                      db: db,
+                                      userId: userId,
+                                      password: password,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            child: const Text("Ver más detalles"),
-                          ),
+                                );
+                              },
+                              child: const Text("Ver más detalles"),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange[700],
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        RegisterInfoView(animalId: animalId),
+                                  ),
+                                );
+                              },
+                              child: const Text("Registrar información"),
+                            ),
+                          ],
                         ),
                       ],
                     ),

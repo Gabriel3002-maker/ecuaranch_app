@@ -1,0 +1,2 @@
+/home/gabrielnet/Desktop/ecuaranch/ecuaranch_app/android/app/.cxx/RelWithDebInfo/296y5b11/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/gabrielnet/Desktop/ecuaranch/ecuaranch_app/android/app/.cxx/RelWithDebInfo/296y5b11/armeabi-v7a/CMakeFiles/rebuild_cache.dir

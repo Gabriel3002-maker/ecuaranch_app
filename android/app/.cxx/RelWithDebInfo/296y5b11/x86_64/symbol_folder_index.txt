@@ -1,0 +1,1 @@
+/home/gabrielnet/Desktop/ecuaranch/ecuaranch_app/build/app/intermediates/cxx/RelWithDebInfo/296y5b11/obj/x86_64
