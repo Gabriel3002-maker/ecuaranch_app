@@ -38,9 +38,32 @@ class AnimalDetailByIdView extends StatelessWidget {
           animalId: animalId,
         ),
       child: Scaffold(
+        backgroundColor: Colors.white, // Fondo blanco
         appBar: AppBar(
-          title: const Text("Detalles del Animal"),
-          backgroundColor: themeColor,
+          backgroundColor: Colors.white, // Fondo blanco en el AppBar
+          automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+            onPressed: () {
+              Navigator.pop(context); // Botón de retroceso
+            },
+          ),
+          title: const Text(
+            'Detalles',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold, // Texto en negrita
+              color: Colors.black, // Texto en color negro
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
+              onPressed: () {
+                // Acción de notificaciones
+              },
+            ),
+          ],
         ),
         body: Consumer<AnimalByIdDetailController>(
           builder: (context, controller, _) {
@@ -89,6 +112,7 @@ class AnimalDetailByIdView extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
+                    color: const Color(0xFFF4F4F4), // Color de la tarjeta
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -122,84 +146,110 @@ class AnimalDetailByIdView extends StatelessWidget {
                   // Bloque de HISTORIAL
                   const Text("📊 Historial", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-                  _navigationButton(context, "Observaciones", () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnimalHistoryObservationView(
-                          db: db,
-                          userId: userId,
-                          password: password,
-                          animalId: animalId
-                          ),
+
+                  // Usamos Wrap en lugar de GridView para que los botones se ajusten automáticamente
+                  Wrap(
+                    spacing: 10, // Espacio horizontal entre los botones
+                    runSpacing: 10, // Espacio vertical entre las filas
+                    children: [
+                      _dashboardButton(
+                        label: 'Observacion',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => AnimalHistoryObservationView(
+                                db: db,
+                                userId: userId,
+                                password: password,
+                                animalId: animalId,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  }),
-                  _navigationButton(context, "Salud", () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnimalHistoryHealthView(
-                          db: db,
-                          userId: userId,
-                          password: password,
-                          animalId: animalId
-                          ),
+                      _dashboardButton(
+                        label: 'Salud',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => AnimalHistoryHealthView(
+                                db: db,
+                                userId: userId,
+                                password: password,
+                                animalId: animalId,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  }),
-                  _navigationButton(context, "Crecimiento y Peso", () {
-                      Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnimalHistoryGrowView(
-                          db: db,
-                          userId: userId,
-                          password: password,
-                          animalId: animalId
-                          ),
+                      _dashboardButton(
+                        label: 'Peso y Crecimiento',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => AnimalHistoryGrowView(
+                                db: db,
+                                userId: userId,
+                                password: password,
+                                animalId: animalId,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  }),
-                  _navigationButton(context, "Reproducción", () {
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnimalHistoryReproductionView(
-                          db: db,
-                          userId: userId,
-                          password: password,
-                          animalId: animalId
-                          ),
+                      _dashboardButton(
+                        label: 'Reproducción',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => AnimalHistoryReproductionView(
+                                db: db,
+                                userId: userId,
+                                password: password,
+                                animalId: animalId,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  }),
-                  _navigationButton(context, "Alimentación ", () {
-                       Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnimalHistoryFeedingView(
-                          db: db,
-                          userId: userId,
-                          password: password,
-                          animalId: animalId
-                          ),
+                      _dashboardButton(
+                        label: 'Alimentación',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => AnimalHistoryFeedingView(
+                                db: db,
+                                userId: userId,
+                                password: password,
+                                animalId: animalId,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  }),
-                   _navigationButton(context, "Produccion ", () {
-                       Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnimalHistoryProductionView(
-                          db: db,
-                          userId: userId,
-                          password: password,
-                          animalId: animalId
-                          ),
+                      _dashboardButton(
+                        label: 'Producción',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => AnimalHistoryProductionView(
+                                db: db,
+                                userId: userId,
+                                password: password,
+                                animalId: animalId,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  }),
+                    ],
+                  ),
                 ],
               ),
             );
@@ -221,18 +271,27 @@ class AnimalDetailByIdView extends StatelessWidget {
     );
   }
 
-  Widget _navigationButton(BuildContext context, String label, VoidCallback onTap) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF8FBC8F),
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(48),
-          textStyle: const TextStyle(fontSize: 16),
+  Widget _dashboardButton({
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF0A5A57), // Color de fondo
+        foregroundColor: Colors.white,
+        minimumSize: const Size(100, 48), // Tamaño mínimo más adecuado para el ajuste
+        textStyle: const TextStyle(fontSize: 12), // Tamaño de texto ajustado
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16), // Bordes redondeados
         ),
-        child: Text(label),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(width: 8),
+          Text(label), // Texto del botón
+        ],
       ),
     );
   }

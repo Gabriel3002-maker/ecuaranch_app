@@ -31,9 +31,32 @@ class _AnimalsViewState extends State<AnimalsView> {
         return false;
       },
       child: Scaffold(
+        backgroundColor: Colors.white, // Fondo blanco
         appBar: AppBar(
-          title: const Text('Animales Registrados en Odoo'),
-          backgroundColor: themeColor,
+          backgroundColor: Colors.white, // Fondo blanco en el AppBar
+          automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+            onPressed: () {
+              Navigator.pop(context); // Botón de retroceso
+            },
+          ),
+          title: const Text(
+            'Animales Registrados',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold, // Texto en negrita
+              color: Colors.black, // Texto en color negro
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
+              onPressed: () {
+                // Acción de notificaciones
+              },
+            ),
+          ],
         ),
         body: Consumer<AnimalsController>(
           builder: (context, controller, child) {

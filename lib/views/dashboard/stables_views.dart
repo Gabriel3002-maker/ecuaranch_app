@@ -24,6 +24,9 @@ class _StablesViewState extends State<StablesView> {
   @override
   Widget build(BuildContext context) {
     final themeColor = const Color(0xFF6B8E23); // Verde oliva
+    final buttonColor = const Color(0xFF0A5A57); // Color del fondo del botón "Ver animales asignados"
+    final addButtonColor = const Color(0xFFFF5722); // Naranja para el botón de agregar
+    final cardBackgroundColor = const Color(0xFFF4F4F4); // Color de fondo para los cards
 
     return WillPopScope(
       onWillPop: () async {
@@ -31,9 +34,32 @@ class _StablesViewState extends State<StablesView> {
         return false;
       },
       child: Scaffold(
+        backgroundColor: Colors.white, // Fondo blanco
         appBar: AppBar(
-          title: const Text('Establos'),
-          backgroundColor: themeColor,
+          backgroundColor: Colors.white, // Fondo blanco en el AppBar
+          automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+            onPressed: () {
+              Navigator.pop(context); // Botón de retroceso
+            },
+          ),
+          title: const Text(
+            'Listado de Establo',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold, // Texto en negrita
+              color: Colors.black, // Texto en color negro
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
+              onPressed: () {
+                // Acción de notificaciones
+              },
+            ),
+          ],
         ),
         body: Consumer<StablesController>(
           builder: (context, controller, child) {
@@ -67,23 +93,19 @@ class _StablesViewState extends State<StablesView> {
                           'Sin descripción';
 
                   return Card(
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    elevation: 8, // Mayor elevación para dar más profundidad
+                    margin: const EdgeInsets.symmetric(vertical: 12), // Más espacio vertical
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16), // Bordes más redondeados
                     ),
+                    color: cardBackgroundColor, // Color de fondo del card
                     child: Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(16.0), // Más espacio dentro del card
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: CircleAvatar(
-                              backgroundColor: themeColor,
-                              child:
-                                  const Icon(Icons.home, color: Colors.white),
-                            ),
                             title: Text(
                               name,
                               style: const TextStyle(
@@ -104,7 +126,8 @@ class _StablesViewState extends State<StablesView> {
                             alignment: Alignment.centerRight,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: themeColor,
+                                backgroundColor: buttonColor, // Fondo del botón verde oscuro
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Mejor tamaño del botón
                               ),
                               onPressed: () {
                                 final stableId = stable['id'] ?? 0;
@@ -115,14 +138,19 @@ class _StablesViewState extends State<StablesView> {
                                     builder: (_) => AnimalsByStableView(
                                       stableId: stableId,
                                       db: 'ecuaRanch', // reemplaza según tu flujo
-                                      userId:
-                                          2, // puedes obtenerlo de AuthProvider
+                                      userId: 2, // puedes obtenerlo de AuthProvider
                                       password: 'gabriel@nextgensolutions.group', 
                                     ),
                                   ),
                                 );
                               },
-                              child: const Text("Ver animales asignados"),
+                              child: const Text(
+                                "Ver animales asignados",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white, // Texto del botón en blanco
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -135,9 +163,11 @@ class _StablesViewState extends State<StablesView> {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: _loadStables,
-          backgroundColor: themeColor,
-          child: const Icon(Icons.refresh),
+          onPressed: () {
+            // Acción para el botón de agregar
+          },
+          backgroundColor: addButtonColor, // Color naranja
+          child: const Icon(Icons.add, color: Colors.white), // Ícono de agregar
         ),
       ),
     );
