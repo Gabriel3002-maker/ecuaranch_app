@@ -18,7 +18,6 @@ class AnimalHistoryReproductionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const themeColor = Color(0xFF6B8E23);
 
     return ChangeNotifierProvider(
       create: (_) => AnimalHistoryReproductionController()

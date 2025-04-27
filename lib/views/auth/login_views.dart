@@ -114,7 +114,7 @@ class LoginScreen extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const DashboardScreen(),
+                                         DashboardScreen(),
                                   ),
                                 );
                               } else if (controller.errorMessage != null) {

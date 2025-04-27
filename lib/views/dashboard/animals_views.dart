@@ -23,7 +23,7 @@ class _AnimalsViewState extends State<AnimalsView> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = const Color(0xFF6B8E23); // Verde oliva
+    const themeColor = Color(0xFF6B8E23); // Verde oliva
 
     return WillPopScope(
       onWillPop: () async {

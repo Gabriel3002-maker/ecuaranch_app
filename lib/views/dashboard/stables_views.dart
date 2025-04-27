@@ -23,10 +23,9 @@ class _StablesViewState extends State<StablesView> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = const Color(0xFF6B8E23); // Verde oliva
-    final buttonColor = const Color(0xFF0A5A57); // Color del fondo del botón "Ver animales asignados"
-    final addButtonColor = const Color(0xFFFF5722); // Naranja para el botón de agregar
-    final cardBackgroundColor = const Color(0xFFF4F4F4); // Color de fondo para los cards
+    const buttonColor = Color(0xFF0A5A57); // Color del fondo del botón "Ver animales asignados"
+    const addButtonColor = Color(0xFFFF5722); // Naranja para el botón de agregar
+    const cardBackgroundColor = Color(0xFFF4F4F4); // Color de fondo para los cards
 
     return WillPopScope(
       onWillPop: () async {

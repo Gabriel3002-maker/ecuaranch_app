@@ -1,63 +1,11 @@
-import 'dart:convert';
+import 'package:ecuaranch/controllers/dashboard/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:http/http.dart' as http;
-import 'package:geolocator/geolocator.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final DashboardController controller = DashboardController(); // Instanciamos el controlador
 
-  // Método para obtener la ubicación actual del dispositivo
-  Future<Position> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Verificamos si los servicios de ubicación están habilitados
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      throw Exception('Los servicios de ubicación están deshabilitados.');
-    }
-
-    // Verificamos si tenemos permiso para acceder a la ubicación
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        throw Exception('Permiso de ubicación denegado');
-      }
-    }
-
-    // Obtenemos la ubicación actual
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-  }
-
-  // Método para obtener el clima usando la API de OpenWeather
-  Future<String> getWeather() async {
-    const apiKey = 'ef760389ec275cbd3691c32e7aa8a557';
-    try {
-      // Obtenemos las coordenadas actuales
-      Position position = await _getCurrentLocation();
-      final lat = position.latitude;
-      final lon = position.longitude;
-
-      // Construimos la URL para la API
-      final url =
-          'https://api.openweathermap.org/data/3.0/onecall?lat=$lat&lon=$lon&exclude=hourly,daily&appid=$apiKey&units=metric';
-
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final temperature = data['current']['temp'];
-        final weatherDescription = data['current']['weather'][0]['description'];
-        return '$temperature°C, $weatherDescription';
-      } else {
-        throw Exception('Failed to load weather');
-      }
-    } catch (e) {
-      throw Exception('Error al cargar clima: $e');
-    }
-  }
+  DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -139,34 +87,45 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
                 infoCard(
-                  title: 'Calendario',
-                  child: FutureBuilder<String>(
-                    future: getWeather(),
+                  title: 'Clima', // Cambié el título para que sea más claro
+                  child: FutureBuilder<Map<String, dynamic>>(
+                    future: controller.getWeather(), // Usamos el controlador para obtener el clima
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Column(
                           children: [
-                            Icon(Icons.calendar_today, size: 40),
+                            Icon(Icons.cloud, size: 40),
                             SizedBox(height: 8),
                             CircularProgressIndicator(),
                           ],
                         );
                       } else if (snapshot.hasError) {
-                        return const  Column(
+                        // Manejo de errores
+                        return Column(
                           children: [
-                            Icon(Icons.calendar_today, size: 40),
-                            SizedBox(height: 8),
-                            Text('Error al cargar clima'),
+                            const Icon(Icons.error, size: 40),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Error: ${snapshot.error}',  // Muestra el mensaje de error
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        );
+                      } else if (snapshot.hasData) {
+                        final weatherData = snapshot.data!;
+                        final temperature = weatherData['temperature'].toStringAsFixed(0); // Redondeamos la temperatura
+                        final description = _translateWeatherDescription(weatherData['description']); // Traducimos la descripción
+
+                        return Column(
+                          children: [
+                            // Mostramos el ícono y la temperatura
+                            Text(weatherData['icon'], style: const TextStyle(fontSize: 40)), // Icono de clima
+                            Text('$temperature°C', style: const TextStyle(fontSize: 24)),
+                            Text(description, style: const TextStyle(fontSize: 16)),
                           ],
                         );
                       } else {
-                        return Column(
-                          children: [
-                            const Icon(Icons.calendar_today, size: 40),
-                            const SizedBox(height: 8),
-                            Text(snapshot.data ?? 'No disponible'),
-                          ],
-                        );
+                        return const Text('Sin datos disponibles');
                       }
                     },
                   ),
@@ -278,5 +237,31 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Método para traducir la descripción del clima a español
+  String _translateWeatherDescription(String description) {
+    switch (description.toLowerCase()) {
+      case 'clear sky':
+        return 'Cielo despejado';
+      case 'few clouds':
+        return 'Pocas nubes';
+      case 'scattered clouds':
+        return 'Nubes dispersas';
+      case 'broken clouds':
+        return 'Nubes rotas';
+      case 'shower rain':
+        return 'Lluvias';
+      case 'light rain':
+        return 'Lluvias Ligeras';
+      case 'thunderstorm':
+        return 'Tormenta';
+      case 'snow':
+        return 'Nieve';
+      case 'mist':
+        return 'Niebla';
+      default:
+        return description; 
+    }
   }
 }
