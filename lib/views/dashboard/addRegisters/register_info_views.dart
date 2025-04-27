@@ -6,6 +6,8 @@ import 'package:ecuaranch/views/dashboard/addRegisters/register_production_views
 import 'package:ecuaranch/views/dashboard/addRegisters/register_reproduction_views,dart';
 import 'package:flutter/material.dart';
 
+// Definir color como constante
+const Color themeColor = Color(0xFF0A5A57);
 
 class RegisterInfoView extends StatelessWidget {
   final int animalId;
@@ -17,12 +19,33 @@ class RegisterInfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const themeColor = Color(0xFF6B8E23);
-
     return Scaffold(
+      backgroundColor: Colors.white, // Fondo general blanco
       appBar: AppBar(
-        title: const Text("Registrar Información"),
-        backgroundColor: themeColor,
+        backgroundColor: Colors.white, // Fondo AppBar
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // Ícono blanco
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text(
+          'Registrar Novedades',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // Texto blanco
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.white), // Ícono blanco
+            onPressed: () {
+              // Acción notificaciones
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -53,13 +76,17 @@ class RegisterInfoView extends StatelessWidget {
         width: double.infinity,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange[700],
+            backgroundColor: themeColor, // Color de fondo del botón
             padding: const EdgeInsets.symmetric(vertical: 14),
           ),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => page));
           },
-          child: Text(title),
+          child: Text(
+  title,
+  style: const TextStyle(color: Colors.white), // Texto blanco
+),
+
         ),
       ),
     );

@@ -29,7 +29,7 @@ class AnimalHistoryReproductionView extends StatelessWidget {
           animalId: animalId,
         ),
       child: Scaffold(
-       backgroundColor: Colors.white, // Fondo blanco
+        backgroundColor: Colors.white, // Fondo blanco
         appBar: AppBar(
           backgroundColor: Colors.white, // Fondo blanco en el AppBar
           automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
@@ -40,7 +40,7 @@ class AnimalHistoryReproductionView extends StatelessWidget {
             },
           ),
           title: const Text(
-            'Historial de Reproduccion',
+            'Historial de Reproducción',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold, // Texto en negrita
@@ -96,6 +96,7 @@ class AnimalHistoryReproductionView extends StatelessWidget {
                   ),
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 8),
+                  color: const Color(0xFFF4F4F4), // Aplicar color F4F4F4 a la tarjeta
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(

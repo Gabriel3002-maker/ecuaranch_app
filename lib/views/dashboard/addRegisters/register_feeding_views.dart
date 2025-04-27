@@ -12,6 +12,8 @@ class RegisterFeedingView extends StatefulWidget {
   State<RegisterFeedingView> createState() => _RegisterFeedingViewState();
 }
 
+const Color themeColor = Color(0xFF0A5A57); // Verde temático
+
 class _RegisterFeedingViewState extends State<RegisterFeedingView> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _alimentoController = TextEditingController();
@@ -36,7 +38,7 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
       "x_name": _alimentoController.text,
     };
 
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_feeding_animal_line"); 
+    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_feeding_animal_line");
 
     try {
       final response = await http.post(
@@ -51,7 +53,7 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("✅ Alimentación registrada correctamente")),
         );
-        Navigator.pop(context); // Volver atrás si todo bien
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("❌ Error: ${response.body}")),
@@ -81,7 +83,31 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Registrar Alimentación")),
+      backgroundColor: Colors.white, // Fondo blanco
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Registrar Alimentacion',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.black),
+            onPressed: () {
+              // Acción futura
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _isLoading
@@ -92,6 +118,8 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
                   children: [
                     Text("Animal ID: ${widget.animalId}"),
                     const SizedBox(height: 16),
+
+                    // Campo de texto
                     TextFormField(
                       controller: _alimentoController,
                       decoration: const InputDecoration(
@@ -102,6 +130,8 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
                           value == null || value.isEmpty ? "Requerido" : null,
                     ),
                     const SizedBox(height: 16),
+
+                    // Fecha
                     Row(
                       children: [
                         Expanded(
@@ -111,16 +141,28 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
                         ),
                         TextButton(
                           onPressed: _pickDate,
-                          child: const Text("Seleccionar fecha"),
+                          child: const Text(
+                            "Seleccionar fecha",
+                            style: TextStyle(color: themeColor),
+                          ),
                         ),
                       ],
                     ),
                     const Spacer(),
+
+                    // Botón registrar
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: themeColor,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
                         onPressed: _submitForm,
-                        child: const Text("Registrar"),
+                        child: const Text(
+                          "Registrar",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],

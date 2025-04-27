@@ -12,6 +12,8 @@ class RegisterHealthView extends StatefulWidget {
   State<RegisterHealthView> createState() => _RegisterHealthViewState();
 }
 
+const Color themeColor = Color(0xFF0A5A57); // Verde temático
+
 class _RegisterHealthViewState extends State<RegisterHealthView> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descripcionController = TextEditingController();
@@ -86,7 +88,33 @@ class _RegisterHealthViewState extends State<RegisterHealthView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Registrar Salud")),
+      backgroundColor: Colors.white, // Fondo blanco
+      appBar: AppBar(
+        backgroundColor: Colors.white, // Fondo blanco en el AppBar
+        automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+          onPressed: () {
+            Navigator.pop(context); // Botón de retroceso
+          },
+        ),
+        title: const Text(
+          'Registrar Salud',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold, // Texto en negrita
+            color: Colors.black, // Texto en color negro
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
+            onPressed: () {
+              // Acción de notificaciones
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _isLoading
@@ -138,7 +166,10 @@ class _RegisterHealthViewState extends State<RegisterHealthView> {
                         ),
                         TextButton(
                           onPressed: _pickDate,
-                          child: const Text("Seleccionar fecha"),
+                          child: const Text(
+                            "Seleccionar fecha",
+                            style: TextStyle(color: themeColor),
+                          ),
                         ),
                       ],
                     ),
@@ -149,8 +180,15 @@ class _RegisterHealthViewState extends State<RegisterHealthView> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: themeColor,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
                         onPressed: _submitForm,
-                        child: const Text("Registrar"),
+                        child: const Text(
+                          "Registrar",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],

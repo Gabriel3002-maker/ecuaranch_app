@@ -92,6 +92,7 @@ class AnimalHistoryFeedingView extends StatelessWidget {
                   ),
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 8),
+                  color: const Color(0xFFF4F4F4), // Aplicar color F4F4F4 a la tarjeta
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(

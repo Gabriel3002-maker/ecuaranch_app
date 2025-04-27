@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+const Color themeColor = Color(0xFF0A5A57);
+
 class RegisterProductionView extends StatefulWidget {
   final int animalId;
 
@@ -84,7 +86,33 @@ class _RegisterProductionViewState extends State<RegisterProductionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Registrar Producción")),
+      backgroundColor: Colors.white, // Fondo blanco
+      appBar: AppBar(
+          backgroundColor: Colors.white, // Fondo blanco en el AppBar
+          automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+            onPressed: () {
+              Navigator.pop(context); // Botón de retroceso
+            },
+          ),
+          title: const Text(
+            'Registrar Produccion',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold, // Texto en negrita
+              color: Colors.black, // Texto en color negro
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
+              onPressed: () {
+                // Acción de notificaciones
+              },
+            ),
+          ],
+        ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _isLoading
@@ -139,18 +167,26 @@ class _RegisterProductionViewState extends State<RegisterProductionView> {
                         ),
                         TextButton(
                           onPressed: _pickDate,
-                          child: const Text("Seleccionar fecha"),
+                          child: const Text("Seleccionar fecha",
+                          style: TextStyle(color: themeColor),),
                         ),
                       ],
                     ),
                     const Spacer(),
 
-                    // Botón
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
+                        style:ElevatedButton.styleFrom(
+                          backgroundColor: themeColor,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+
+                        ),
                         onPressed: _submitForm,
-                        child: const Text("Registrar"),
+                        child: const Text("Registrar",
+                        style:  TextStyle(color: Colors.white
+                        ),
+                        ) ,
                       ),
                     ),
                   ],

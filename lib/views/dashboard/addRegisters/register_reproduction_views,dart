@@ -12,26 +12,25 @@ class RegisterReproductionView extends StatefulWidget {
   State<RegisterReproductionView> createState() => _RegisterReproductionViewState();
 }
 
+const Color themeColor = Color(0xFF0A5A57);
+
 class _RegisterReproductionViewState extends State<RegisterReproductionView> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _expectedOffspringController = TextEditingController();
-  final TextEditingController _durationController = TextEditingController();  // Campo para la duracion del celo
+  final TextEditingController _durationController = TextEditingController();
 
   DateTime _celOStartDate = DateTime.now();
   DateTime _inseminationDate = DateTime.now();
   bool _isLoading = false;
 
-  // Datos fijos
   final String db = "ecuaRanch";
   final int userId = 2;
   final String password = "gabriel@nextgensolutions.group";
 
-  // Opciones para los campos desplegables
   String _methodOfReproduction = "Inseminacion";
   String _confirmationOfPregnancy = "Ecografia";
   String _pregnancyConfirmed = "Si";
 
-  // Metodos para actualizar los campos
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -45,13 +44,13 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
       "x_studio_fecha_de_inicio_del_celo": DateFormat('yyyy-MM-dd').format(_celOStartDate),
       "x_studio_fecha_de_inseminacin": DateFormat('yyyy-MM-dd').format(_inseminationDate),
       "x_studio_metodo_de_reproduccion": _methodOfReproduction,
-      "x_name": _durationController.text,  // Usamos la duracion del celo
+      "x_name": _durationController.text,
       "x_studio_confirmacin_de_embarazo_1": _confirmationOfPregnancy,
       "x_studio_embarazo_confirmado": _pregnancyConfirmed,
       "x_studio_nmero_de_cras_esperadas": int.tryParse(_expectedOffspringController.text) ?? 0,
     };
 
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_reproduction_followup_animal_in_odoo"); 
+    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_reproduction_followup_animal_in_odoo");
 
     try {
       final response = await http.post(
@@ -96,7 +95,31 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Registrar Reproduccion")),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Registrar Etapas de Reproduccion',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.black),
+            onPressed: () {
+              // Acción futura
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _isLoading
@@ -108,7 +131,7 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
                     Text("Animal ID: ${widget.animalId}"),
                     const SizedBox(height: 16),
 
-                    // Fecha de inicio del celo
+                    // Fecha inicio del celo
                     Row(
                       children: [
                         Expanded(
@@ -118,13 +141,16 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
                         ),
                         TextButton(
                           onPressed: () => _pickDate(_celOStartDate, (date) => _celOStartDate = date),
-                          child: const Text("Seleccionar fecha"),
+                          child: const Text(
+                            "Seleccionar fecha",
+                            style: TextStyle(color: themeColor),
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
 
-                    // Fecha de inseminacion
+                    // Fecha de inseminación
                     Row(
                       children: [
                         Expanded(
@@ -134,24 +160,22 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
                         ),
                         TextButton(
                           onPressed: () => _pickDate(_inseminationDate, (date) => _inseminationDate = date),
-                          child: const Text("Seleccionar fecha"),
+                          child: const Text(
+                            "Seleccionar fecha",
+                            style: TextStyle(color: themeColor),
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
 
-                    // Metodo de reproduccion (Dropdown)
                     DropdownButtonFormField<String>(
                       value: _methodOfReproduction,
-                      items: [
+                      items: const [
                         DropdownMenuItem(child: Text("Inseminacion"), value: "Inseminacion"),
                         DropdownMenuItem(child: Text("Cubricion Natural"), value: "Cubricion Natural"),
                       ],
-                      onChanged: (value) {
-                        setState(() {
-                          _methodOfReproduction = value!;
-                        });
-                      },
+                      onChanged: (value) => setState(() => _methodOfReproduction = value!),
                       decoration: const InputDecoration(
                         labelText: "Metodo de reproduccion",
                         border: OutlineInputBorder(),
@@ -159,18 +183,13 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Confirmacion de embarazo (Dropdown)
                     DropdownButtonFormField<String>(
                       value: _confirmationOfPregnancy,
-                      items: [
+                      items: const [
                         DropdownMenuItem(child: Text("Ecografia"), value: "Ecografia"),
                         DropdownMenuItem(child: Text("Examen Veterinario"), value: "Examen Veterinario"),
                       ],
-                      onChanged: (value) {
-                        setState(() {
-                          _confirmationOfPregnancy = value!;
-                        });
-                      },
+                      onChanged: (value) => setState(() => _confirmationOfPregnancy = value!),
                       decoration: const InputDecoration(
                         labelText: "Confirmacion de embarazo",
                         border: OutlineInputBorder(),
@@ -178,18 +197,13 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Embarazo confirmado (Dropdown)
                     DropdownButtonFormField<String>(
                       value: _pregnancyConfirmed,
-                      items: [
+                      items: const [
                         DropdownMenuItem(child: Text("Si"), value: "Si"),
                         DropdownMenuItem(child: Text("No"), value: "No"),
                       ],
-                      onChanged: (value) {
-                        setState(() {
-                          _pregnancyConfirmed = value!;
-                        });
-                      },
+                      onChanged: (value) => setState(() => _pregnancyConfirmed = value!),
                       decoration: const InputDecoration(
                         labelText: "Embarazo confirmado",
                         border: OutlineInputBorder(),
@@ -197,7 +211,6 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Numero de crias esperadas
                     TextFormField(
                       controller: _expectedOffspringController,
                       keyboardType: TextInputType.number,
@@ -217,7 +230,6 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Duracion del celo (campo de texto)
                     TextFormField(
                       controller: _durationController,
                       keyboardType: TextInputType.number,
@@ -237,12 +249,18 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
                     ),
                     const Spacer(),
 
-                    // Boton de registro
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: themeColor,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
                         onPressed: _submitForm,
-                        child: const Text("Registrar"),
+                        child: const Text(
+                          "Registrar",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],

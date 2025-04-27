@@ -12,6 +12,8 @@ class RegisterGrowthView extends StatefulWidget {
   State<RegisterGrowthView> createState() => _RegisterGrowthViewState();
 }
 
+const Color themeColor = Color(0xFF0A5A57); // Verde temático
+
 class _RegisterGrowthViewState extends State<RegisterGrowthView> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _pesoController = TextEditingController(); // x_name
@@ -84,7 +86,31 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Registrar Crecimiento y Peso")),
+      backgroundColor: Colors.white, // Fondo blanco
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Registrar Crecimiento y Peso',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.black),
+            onPressed: () {
+              // Acción de notificaciones
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _isLoading
@@ -95,6 +121,8 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
                   children: [
                     Text("Animal ID: ${widget.animalId}"),
                     const SizedBox(height: 16),
+
+                    // Campo de Peso
                     TextFormField(
                       controller: _pesoController,
                       keyboardType: TextInputType.number,
@@ -106,6 +134,8 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
                           value == null || value.isEmpty ? "Requerido" : null,
                     ),
                     const SizedBox(height: 16),
+
+                    // Campo de Altura
                     TextFormField(
                       controller: _alturaController,
                       keyboardType: TextInputType.number,
@@ -117,6 +147,8 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
                           value == null || value.isEmpty ? "Requerido" : null,
                     ),
                     const SizedBox(height: 16),
+
+                    // Selección de Fecha
                     Row(
                       children: [
                         Expanded(
@@ -126,16 +158,28 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
                         ),
                         TextButton(
                           onPressed: _pickDate,
-                          child: const Text("Seleccionar fecha"),
+                          child: const Text(
+                            "Seleccionar fecha",
+                            style: TextStyle(color: themeColor),
+                          ),
                         ),
                       ],
                     ),
                     const Spacer(),
+
+                    // Botón de Registro
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: themeColor,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
                         onPressed: _submitForm,
-                        child: const Text("Registrar"),
+                        child: const Text(
+                          "Registrar",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
