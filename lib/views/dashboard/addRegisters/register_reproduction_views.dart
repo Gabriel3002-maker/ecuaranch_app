@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../../settings/settings.dart';
+
 class RegisterReproductionView extends StatefulWidget {
   final int animalId;
 
@@ -23,9 +25,9 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
   DateTime _inseminationDate = DateTime.now();
   bool _isLoading = false;
 
-  final String db = "ecuaRanch";
-  final int userId = 2;
-  final String password = "gabriel@nextgensolutions.group";
+  final String db = Config.databaseName;
+  final int userId = Config.userId;
+  final String password = Config.password;
 
   String _methodOfReproduction = "Inseminacion";
   String _confirmationOfPregnancy = "Ecografia";

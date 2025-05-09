@@ -6,7 +6,12 @@ import 'package:ecuaranch/dto/animalCreateHealthMonitoringDTO.dart';
 import 'package:ecuaranch/dto/animalCreateObservationDTO.dart';
 import 'package:ecuaranch/dto/animalCreateProductionDTO.dart';
 import 'package:ecuaranch/dto/animalCreateReproductionFollowUpDTO.dart';
+import 'package:ecuaranch/model/create_stable.dart';
 import 'package:http/http.dart' as http;
+
+import '../model/partner.dart';
+import '../model/person.dart';
+import '../settings/settings.dart';
 
 class OdooService {
   final String url = "https://ecuaranch-backend.duckdns.org";
@@ -486,4 +491,356 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
       throw Exception("Error de conexión: $e");
     }
   }
+
+
+  Future<List<Map<String, dynamic>>> getEventsFromOdoo(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_events"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // ✅ Solución: forzar decodificación UTF-8
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> eventsData = responseBody['events'];
+          return List<Map<String, dynamic>>.from(eventsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getLeadsFromOdoo(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_crm"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // ✅ Solución: forzar decodificación UTF-8
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> eventsData = responseBody['leads'];
+          return List<Map<String, dynamic>>.from(eventsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getExpensesFromOdoo(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_expenses"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // ✅ Solución: forzar decodificación UTF-8
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> eventsData = responseBody['expenses'];
+          return List<Map<String, dynamic>>.from(eventsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getFactoryFromOdoo(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_factory"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // ✅ Solución: forzar decodificación UTF-8
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> eventsData = responseBody['factory'];
+          return List<Map<String, dynamic>>.from(eventsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getSalesFromOdoo(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_sales"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // ✅ Solución: forzar decodificación UTF-8
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> eventsData = responseBody['factory'];
+          return List<Map<String, dynamic>>.from(eventsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getWarehouseFromOdoo(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_Warehouses"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // ✅ Solución: forzar decodificación UTF-8
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> eventsData = responseBody['warehouses'];
+          return List<Map<String, dynamic>>.from(eventsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  static Future<bool> createStable(StableData data) async {
+    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_stable");
+
+    final headers = {"Content-Type": "application/json"};
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(data.toJson()),
+    );
+
+    return response.statusCode == 200;
+  }
+
+  static Future<List<Person>> fetchPersons() async {
+    final url = Uri.parse('https://ecuaranch-backend.duckdns.org/get_person');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "db": Config.databaseName,
+        "user_id": Config.userId,
+        "password": Config.password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonData = jsonDecode(response.body);
+      final List<dynamic> personList = jsonData['person'];
+      return personList.map((json) => Person.fromJson(json)).toList();
+    } else {
+      throw Exception('Error al obtener personas');
+    }
+  }
+
+  static Future<bool> createPerson(Partner partner) async {
+    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_person");
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(partner.toJson()),
+    );
+
+    return response.statusCode == 200;
+  }
+
+  Future<Map<String, dynamic>> getMonthlySalesAndExpenses(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_monthly_sales_and_expenses"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          // Devuelve solo los datos relevantes
+          return {
+            "total_sales": responseBody["total_sales"],
+            "total_expenses": responseBody["total_expenses"],
+            "net_profit": responseBody["net_profit"],
+          };
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAnimalsHealthAlerts(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_animals_health_alerts"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // ✅ Solución: forzar decodificación UTF-8
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> eventsData = responseBody['health'];
+          return List<Map<String, dynamic>>.from(eventsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAnimalsWeightAlerts(
+      String db, String userId, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_animals_weight_alerts"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // ✅ Solución: forzar decodificación UTF-8
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> eventsData = responseBody['health'];
+          return List<Map<String, dynamic>>.from(eventsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+
+
+
 }

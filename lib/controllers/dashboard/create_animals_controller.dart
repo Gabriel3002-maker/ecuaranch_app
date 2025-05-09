@@ -2,13 +2,15 @@ import 'package:ecuaranch/dto/animalCreateDTO.dart';
 import 'package:ecuaranch/services/services.dart';
 import 'package:flutter/material.dart';
 
+import '../../settings/settings.dart';
+
 
 class CreateAnimalsController with ChangeNotifier {
   final OdooService odooService = OdooService();
 
-  final String _db = 'ecuaRanch';
-  final int _userId = 2; 
-  final String _password = 'gabriel@nextgensolutions.group';
+  final String _db = Config.databaseName;
+  final int _userId =  Config.userId;
+  final String _password = Config.password;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;

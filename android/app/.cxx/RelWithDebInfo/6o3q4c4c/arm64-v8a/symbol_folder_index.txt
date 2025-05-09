@@ -1,0 +1,1 @@
+/home/gabrielnet/Desktop/ecuaranch/ecuaranch_app/build/app/intermediates/cxx/RelWithDebInfo/6o3q4c4c/obj/arm64-v8a

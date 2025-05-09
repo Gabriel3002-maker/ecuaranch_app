@@ -1,7 +1,7 @@
 import 'package:ecuaranch/controllers/auth/auth_controller.dart';
-import 'package:ecuaranch/views/dashboard/dashboard_views.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../dashboard/main_tab_views.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -114,7 +114,7 @@ class LoginScreen extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                         DashboardScreen(),
+                                        const MainTabScreen(),
                                   ),
                                 );
                               } else if (controller.errorMessage != null) {

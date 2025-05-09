@@ -3,7 +3,7 @@ import 'package:ecuaranch/views/dashboard/addRegisters/register_growth_views.dar
 import 'package:ecuaranch/views/dashboard/addRegisters/register_heatlh_views.dart';
 import 'package:ecuaranch/views/dashboard/addRegisters/register_observation_views.dart';
 import 'package:ecuaranch/views/dashboard/addRegisters/register_production_views.dart';
-import 'package:ecuaranch/views/dashboard/addRegisters/register_reproduction_views,dart';
+import 'package:ecuaranch/views/dashboard/addRegisters/register_reproduction_views.dart';
 import 'package:flutter/material.dart';
 
 // Definir color como constante

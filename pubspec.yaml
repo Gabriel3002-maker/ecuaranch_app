@@ -17,6 +17,10 @@ dependencies:
   easy_localization: ^3.0.7+1
   geolocator: ^13.0.0
   weather: ^3.2.1
+  web_socket_channel: ^3.0.0
+  flutter_local_notifications: ^18.0.0
+  image_picker: ^1.1.0
+  flutter_native_splash: ^2.4.6
 
 
 dev_dependencies:
@@ -34,6 +38,12 @@ flutter:
     - assets/translations/
 
 
+flutter_native_splash:
+  color: "#ffffff"  # color de fondo
+  image: assets/images/logoecuaranch.png  # Imagen que quieres mostrar
+  android: true  # Splash en Android
+  ios: true  # Splash en iOS
+  web: false  # No utilizar splash en Web (opcional)
 
   #   - images/a_dot_ham.jpeg
 

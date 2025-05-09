@@ -3,10 +3,13 @@
 import 'package:ecuaranch/services/services.dart';
 import 'package:flutter/material.dart';
 
+import '../../settings/settings.dart';
+
 class UserController with ChangeNotifier {
   final OdooService odooService = OdooService();
   
-  String db = 'ecuaRanch';
+  String db = Config.databaseName;
+
   String username = '';
   String password = '';
 

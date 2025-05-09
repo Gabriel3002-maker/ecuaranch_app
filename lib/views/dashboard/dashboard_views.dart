@@ -3,22 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class DashboardScreen extends StatelessWidget {
-  final DashboardController controller = DashboardController(); // Instanciamos el controlador
+  final DashboardController controller = DashboardController();
 
   DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const buttonColor = Color(0xFF0A5A57); 
+    const buttonColor = Color(0xFF0A5A57);
     const cardColor = Color(0xFFF4F4F4);
-    const metaProgreso = 5000; 
 
     Widget infoCard({required String title, required Widget child}) {
       return Expanded(
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           elevation: 4,
-          color: cardColor, 
+          color: cardColor,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -38,13 +37,13 @@ class DashboardScreen extends StatelessWidget {
     }
 
     Widget dashboardButton({
-      required String imagePath, 
+      required String imagePath,
       required String label,
       required VoidCallback onTap,
     }) {
       return Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        color: buttonColor, 
+        color: buttonColor,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
@@ -53,7 +52,7 @@ class DashboardScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(imagePath, width: 40, height: 40), 
+                Image.asset(imagePath, width: 40, height: 40),
                 const SizedBox(height: 8),
                 Text(
                   label,
@@ -68,11 +67,12 @@ class DashboardScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // Fila 1: Ejemplares y Clima
             Row(
               children: [
                 infoCard(
@@ -87,9 +87,9 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
                 infoCard(
-                  title: 'Clima', // Cambié el título para que sea más claro
+                  title: 'Clima',
                   child: FutureBuilder<Map<String, dynamic>>(
-                    future: controller.getWeather(), // Usamos el controlador para obtener el clima
+                    future: controller.getWeather(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Column(
@@ -100,26 +100,20 @@ class DashboardScreen extends StatelessWidget {
                           ],
                         );
                       } else if (snapshot.hasError) {
-                        // Manejo de errores
                         return Column(
                           children: [
                             const Icon(Icons.error, size: 40),
                             const SizedBox(height: 8),
-                            Text(
-                              'Error: ${snapshot.error}',  // Muestra el mensaje de error
-                              textAlign: TextAlign.center,
-                            ),
+                            Text('Error: ${snapshot.error}', textAlign: TextAlign.center),
                           ],
                         );
                       } else if (snapshot.hasData) {
                         final weatherData = snapshot.data!;
-                        final temperature = weatherData['temperature'].toStringAsFixed(0); // Redondeamos la temperatura
-                        final description = _translateWeatherDescription(weatherData['description']); // Traducimos la descripción
-
+                        final temperature = weatherData['temperature'].toStringAsFixed(0);
+                        final description = _translateWeatherDescription(weatherData['description']);
                         return Column(
                           children: [
-                            // Mostramos el ícono y la temperatura
-                            Text(weatherData['icon'], style: const TextStyle(fontSize: 40)), // Icono de clima
+                            Text(weatherData['icon'], style: const TextStyle(fontSize: 40)),
                             Text('$temperature°C', style: const TextStyle(fontSize: 24)),
                             Text(description, style: const TextStyle(fontSize: 16)),
                           ],
@@ -134,36 +128,61 @@ class DashboardScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Fila 2: Producción
+            // Fila 2: Producción y Finanzas del Mes
             Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               elevation: 4,
-              color: cardColor, // Color de fondo de la tarjeta de producción
+              color: cardColor,
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Producción - Meta Mensual: \$10,000',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    LinearProgressIndicator(
-                      value: metaProgreso / 10000,
-                      minHeight: 20,
-                      backgroundColor: Colors.grey.shade300,
-                      valueColor: const AlwaysStoppedAnimation<Color>(buttonColor),
-                    ),
-                    const SizedBox(height: 8),
-                    Text('\$${metaProgreso.toStringAsFixed(0)} alcanzado'),
-                  ],
+                child: FutureBuilder<Map<String, dynamic>>(
+                  future: controller.getMonthlySalesAndExpenses(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error al cargar finanzas: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      final data = snapshot.data!;
+                      final totalSales = (data["total_sales"] ?? 0).toDouble();
+                      final totalExpenses = (data["total_expenses"] ?? 0).toDouble();
+                      final netProfit = (data["net_profit"] ?? 0).toDouble();
+                      final meta = 10000.0;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Producción - Meta Mensual: \$10,000',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          LinearProgressIndicator(
+                            value: (totalSales / meta).clamp(0.0, 1.0),
+                            minHeight: 20,
+                            backgroundColor: Colors.grey.shade300,
+                            valueColor: const AlwaysStoppedAnimation<Color>(buttonColor),
+                          ),
+                          const SizedBox(height: 8),
+                          Text('\$${totalSales.toStringAsFixed(2)} alcanzado'),
+                          const Divider(height: 20),
+                          Text('Gastos: \$${totalExpenses.toStringAsFixed(2)}'),
+                          Text(
+                            'Ganancia Neta: \$${netProfit.toStringAsFixed(2)}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const Text('Sin datos disponibles');
+                    }
+                  },
                 ),
               ),
             ),
             const SizedBox(height: 10),
 
-            // Fila 3: Primer grupo de botones
+            // Fila 3: Botones principales
             Row(
               children: [
                 Expanded(
@@ -173,7 +192,7 @@ class DashboardScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: dashboardButton(
-                              imagePath: 'assets/icons/list_stables.png', 
+                              imagePath: 'assets/icons/list_stables.png',
                               label: 'Listado de Establos',
                               onTap: () => Navigator.pushNamed(context, '/list-stables'),
                             ),
@@ -189,7 +208,7 @@ class DashboardScreen extends StatelessWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: dashboardButton(
-                              imagePath: 'assets/icons/animal_register.png', 
+                              imagePath: 'assets/icons/animal_register.png',
                               label: 'Registrar Animal',
                               onTap: () => Navigator.pushNamed(context, '/create-animal'),
                             ),
@@ -203,7 +222,7 @@ class DashboardScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Fila 4: Subfila de botones extra
+            // Fila 4: Botones adicionales
             GridView.count(
               crossAxisCount: 3,
               shrinkWrap: true,
@@ -212,19 +231,14 @@ class DashboardScreen extends StatelessWidget {
               mainAxisSpacing: 10,
               children: [
                 dashboardButton(
-                  imagePath: 'assets/icons/animal_health.png', 
-                  label: 'Salud',
-                  onTap: () {},
+                  imagePath: 'assets/icons/health.png',
+                  label: 'Alertas Salud',
+                  onTap: () => Navigator.pushNamed(context, '/alert-heath'),
                 ),
                 dashboardButton(
-                  imagePath: 'assets/icons/animal_events.png', 
-                  label: 'Eventos',
-                  onTap: () {},
-                ),
-                dashboardButton(
-                  imagePath: 'assets/icons/finances.png', 
-                  label: 'Finanzas',
-                  onTap: () {},
+                  imagePath: 'assets/icons/weight.png',
+                  label: 'Alertas  Peso',
+                  onTap: () => Navigator.pushNamed(context, '/alert-weight'),
                 ),
                 dashboardButton(
                   imagePath: 'assets/icons/logout.png',
@@ -239,7 +253,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Método para traducir la descripción del clima a español
+  // Traducción del clima
   String _translateWeatherDescription(String description) {
     switch (description.toLowerCase()) {
       case 'clear sky':
@@ -253,7 +267,7 @@ class DashboardScreen extends StatelessWidget {
       case 'shower rain':
         return 'Lluvias';
       case 'light rain':
-        return 'Lluvias Ligeras';
+        return 'Lluvias ligeras';
       case 'thunderstorm':
         return 'Tormenta';
       case 'snow':
@@ -261,7 +275,7 @@ class DashboardScreen extends StatelessWidget {
       case 'mist':
         return 'Niebla';
       default:
-        return description; 
+        return description;
     }
   }
 }

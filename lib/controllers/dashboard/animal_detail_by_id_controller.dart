@@ -1,6 +1,8 @@
 import 'package:ecuaranch/services/services.dart';
 import 'package:flutter/material.dart';
 
+import '../../settings/settings.dart';
+
 class AnimalByIdDetailController extends ChangeNotifier {
   bool isLoading = false;
   String errorMessage = '';
@@ -20,9 +22,9 @@ class AnimalByIdDetailController extends ChangeNotifier {
 
     try {
       animalDetails = await odooService.getAnimalDetailsById(
-        db: 'ecuaRanch',
-        userId: 2,
-        password: 'gabriel@nextgensolutions.group',
+        db: Config.databaseName,
+        userId: Config.userId,
+        password: Config.password,
         animalId: animalId,
       );
     } catch (e) {

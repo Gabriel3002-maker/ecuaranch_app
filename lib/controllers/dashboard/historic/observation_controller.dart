@@ -1,6 +1,8 @@
 import 'package:ecuaranch/services/services.dart';
 import 'package:flutter/material.dart';
 
+import '../../../settings/settings.dart';
+
 class AnimalHistoryObservationController extends ChangeNotifier {
   final OdooService odooService = OdooService();
 
@@ -22,9 +24,9 @@ class AnimalHistoryObservationController extends ChangeNotifier {
 
     try {
       final data = await odooService.fetchAnimalHistoryObservation(
-        db: 'ecuaRanch',
-        userId: 2,
-        password: 'gabriel@nextgensolutions.group',
+        db: Config.databaseName,
+        userId: Config.userId,
+        password: Config.password,
         animalId: animalId,
         offset: offset,
         limit: limit,
