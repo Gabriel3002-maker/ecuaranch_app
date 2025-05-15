@@ -1,7 +1,9 @@
+import 'package:ecuaranch/controllers/dashboard/weight_alert_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/dashboard/health_alert_controller.dart';
+import '../../settings/settings.dart';
+import 'animal_detail_by_id_views.dart';
 
 class WeightAlertViews extends StatefulWidget {
   const WeightAlertViews({super.key});
@@ -18,7 +20,7 @@ class _WeightAlertViewsState extends State<WeightAlertViews> {
   }
 
   Future<void> _loadAlerts() async {
-    await context.read<HealthAlertController>().fetchUserData();
+    await context.read<WeightAlertController>().fetchUserData();
   }
 
   void _showAlertActionDialog(BuildContext context, int alertId) {
@@ -87,7 +89,7 @@ class _WeightAlertViewsState extends State<WeightAlertViews> {
             ),
           ],
         ),
-        body: Consumer<HealthAlertController>(
+        body: Consumer<WeightAlertController>(
           builder: (context, controller, child) {
             if (controller.isLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -97,7 +99,7 @@ class _WeightAlertViewsState extends State<WeightAlertViews> {
               return Center(child: Text(controller.errorMessage));
             }
 
-            if (controller.health.isEmpty) {
+            if (controller.weight.isEmpty) {
               return const Center(
                 child: Text(
                   "No se encontraron alertas de peso.",
@@ -110,9 +112,9 @@ class _WeightAlertViewsState extends State<WeightAlertViews> {
               onRefresh: _loadAlerts,
               child: ListView.builder(
                 padding: const EdgeInsets.all(12),
-                itemCount: controller.health.length,
+                itemCount: controller.weight.length,
                 itemBuilder: (context, index) {
-                  final alert = controller.health[index];
+                  final alert = controller.weight[index];
                   final alertId = alert['id'];
                   final alertName = alert['x_name'] ?? 'Sin nombre';
                   final animalData = alert['x_studio_animal'] as List<dynamic>? ?? [];
@@ -121,6 +123,8 @@ class _WeightAlertViewsState extends State<WeightAlertViews> {
                   final diffWeight = alert['x_studio_diferencia_de_peso']?.toString() ?? '0';
                   final currentWeight = alert['x_studio_peso_actual']?.toString() ?? '0';
                   final previousWeight = alert['x_studio_peso_anterior']?.toString() ?? '0';
+
+                  final animalId = animalData.isNotEmpty ? animalData[0] : null;
 
                   return Card(
                     elevation: 8,
@@ -156,10 +160,34 @@ class _WeightAlertViewsState extends State<WeightAlertViews> {
                                 Text("Diferencia de peso: $diffWeight kg"),
                               ],
                             ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.pan_tool, color: Colors.blue),
-                              tooltip: "Tomar acción",
-                              onPressed: () => _showAlertActionDialog(context, alertId),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.pan_tool, color: Colors.blue),
+                                  tooltip: "Tomar acción",
+                                  onPressed: () => _showAlertActionDialog(context, alertId),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.pets, color: Colors.green),
+                                  tooltip: "Ver detalles del animal",
+                                  onPressed: () {
+                                    if (animalId != null) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => AnimalDetailByIdView(
+                                            animalId: animalId,
+                                            db: Config.databaseName,
+                                            userId: Config.userId,
+                                            password: Config.password
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -170,13 +198,6 @@ class _WeightAlertViewsState extends State<WeightAlertViews> {
               ),
             );
           },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Acción para agregar una alerta
-          },
-          backgroundColor: addButtonColor,
-          child: const Icon(Icons.add, color: Colors.white),
         ),
       ),
     );

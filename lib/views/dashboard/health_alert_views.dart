@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/dashboard/health_alert_controller.dart';
+import '../../settings/settings.dart';
+import 'animal_detail_by_id_views.dart';
 
 class HealthAlertViews extends StatefulWidget {
   const HealthAlertViews({super.key});
@@ -121,6 +123,9 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
                   final alertDate = alert['x_studio_fecha'] ?? 'Fecha no disponible';
                   final alertId = alert['id'];
 
+                  // Obtener el animalId para navegación
+                  final animalId = animalData.isNotEmpty ? animalData[0] : null;
+
                   return Card(
                     elevation: 8,
                     margin: const EdgeInsets.symmetric(vertical: 12),
@@ -150,10 +155,36 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
                                 Text("Fecha: $alertDate"),
                               ],
                             ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.pan_tool, color: Colors.blue),
-                              tooltip: "Tomar acción",
-                              onPressed: () => _showAlertActionDialog(context, alertId),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Icono para tomar acción sobre la alerta
+                                IconButton(
+                                  icon: const Icon(Icons.pan_tool, color: Colors.blue),
+                                  tooltip: "Tomar acción",
+                                  onPressed: () => _showAlertActionDialog(context, alertId),
+                                ),
+                                // Icono para ver los detalles del animal
+                                IconButton(
+                                  icon: const Icon(Icons.pets, color: Colors.green),
+                                  tooltip: "Ver detalles del animal",
+                                  onPressed: () {
+                                    if (animalId != null) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => AnimalDetailByIdView(
+                                            animalId: animalId,
+                                            db:  Config.databaseName,
+                                            userId:  Config.userId,
+                                            password: Config.password,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -164,13 +195,6 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
               ),
             );
           },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Acción para el botón de agregar
-          },
-          backgroundColor: addButtonColor,
-          child: const Icon(Icons.add, color: Colors.white),
         ),
       ),
     );

@@ -138,7 +138,7 @@ class _StablesViewState extends State<StablesView> {
                                       stableId: stableId,
                                       db: 'ecuaRanch', // reemplaza según tu flujo
                                       userId: 2, // puedes obtenerlo de AuthProvider
-                                      password: 'gabriel@nextgensolutions.group', 
+                                      password: 'gabriel@nextgensolutions.group',
                                     ),
                                   ),
                                 );
@@ -163,10 +163,10 @@ class _StablesViewState extends State<StablesView> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Acción para el botón de agregar
+            Navigator.pushNamed(context, '/create-stables');
           },
-          backgroundColor: addButtonColor, // Color naranja
-          child: const Icon(Icons.add, color: Colors.white), // Ícono de agregar
+          backgroundColor: Colors.orange,
+          child: const Icon(Icons.add, color: Colors.white,),
         ),
       ),
     );

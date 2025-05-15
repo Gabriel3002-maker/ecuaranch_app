@@ -10,8 +10,10 @@ class GanaderiaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const buttonColor = Color(0xFF0A5A57);
-    const cardColor = Color(0xFFF4F4F4);
-    const metaProgreso = 5000;
+    const sectionTitleStyle = TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+    );
 
     Widget dashboardButton({
       required String imagePath,
@@ -25,7 +27,7 @@ class GanaderiaScreen extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -39,6 +41,7 @@ class GanaderiaScreen extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
                 ),
               ],
@@ -48,77 +51,74 @@ class GanaderiaScreen extends StatelessWidget {
       );
     }
 
+    Widget sectionCard(String title, List<Widget> buttons) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: sectionTitleStyle),
+          const SizedBox(height: 8),
+          GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            children: buttons,
+          ),
+          const SizedBox(height: 20),
+        ],
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const SizedBox(width: 8),
-            // Tarjeta de producción
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 4,
-              color: cardColor,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Producción - Meta Mensual: \$10,000',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    LinearProgressIndicator(
-                      value: metaProgreso / 10000,
-                      minHeight: 20,
-                      backgroundColor: Colors.grey.shade300,
-                      valueColor: const AlwaysStoppedAnimation<Color>(buttonColor),
-                    ),
-                    const SizedBox(height: 8),
-                    Text('\$${metaProgreso.toStringAsFixed(0)} alcanzado'),
-                  ],
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06,
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png', // Ruta de la imagen
+                    width: 260,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+          ),
 
-            // Grid de botones reorganizados
-            SizedBox(
-              height: 520, // Espacio suficiente para evitar overflow
-              child: GridView.count(
-                crossAxisCount: 3,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  // Sección: Registro
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                sectionCard("", [
                   dashboardButton(
                     imagePath: 'assets/icons/person_register.png',
-                    label: 'Registrar Persona',
+                    label: 'Persona',
                     onTap: () => Navigator.pushNamed(context, '/create-partner'),
                   ),
                   dashboardButton(
                     imagePath: 'assets/icons/animal_register.png',
-                    label: 'Registrar Animal',
+                    label: 'Animal',
                     onTap: () => Navigator.pushNamed(context, '/create-animal'),
                   ),
                   dashboardButton(
                     imagePath: 'assets/icons/list_stables.png',
-                    label: 'Registrar Establos',
+                    label: 'Granja',
                     onTap: () => Navigator.pushNamed(context, '/create-stables'),
                   ),
-
-                  // Sección: Otros
+                ]),
+                sectionCard("", [
                   dashboardButton(
                     imagePath: 'assets/icons/oportunity.png',
                     label: 'Oportunidades',
                     onTap: () => Navigator.pushNamed(context, '/list-leads'),
                   ),
+                ]),
+                sectionCard(" ", [
                   dashboardButton(
                     imagePath: 'assets/icons/production.png',
                     label: 'Fábricas',
@@ -134,12 +134,13 @@ class GanaderiaScreen extends StatelessWidget {
                     label: 'Almacenes',
                     onTap: () => Navigator.pushNamed(context, '/list-warehouses'),
                   ),
-                ],
-              ),
+                ]),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+
   }
 }

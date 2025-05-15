@@ -129,6 +129,7 @@ class _RegisterStableViewState extends State<RegisterStableView> {
           key: _formKey,
           child: ListView(
             children: [
+              // Campo Nombre
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Nombre'),
@@ -136,6 +137,8 @@ class _RegisterStableViewState extends State<RegisterStableView> {
                 value == null || value.isEmpty ? 'Ingrese un nombre' : null,
               ),
               const SizedBox(height: 10),
+
+              // Dropdown para seleccionar Persona
               DropdownButtonFormField<Person>(
                 value: _selectedPerson,
                 items: _persons.map((person) {
@@ -153,18 +156,24 @@ class _RegisterStableViewState extends State<RegisterStableView> {
                 validator: (value) => value == null ? 'Seleccione una persona' : null,
               ),
               const SizedBox(height: 10),
+
+              // Botón para registrar nueva persona
               if (_selectedPerson == null)
                 ElevatedButton(
                   onPressed: () {
-                    // Navegar a la vista para registrar nueva persona
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const RegisterPersonView()),
                     );
                   },
-                  child: const Text('Registrar nueva persona'),
+                  child: const Text('Registrar nueva persona', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0A5A57), // Color de fondo
+                  ),
                 ),
               const SizedBox(height: 10),
+
+              // Selección de fecha
               Row(
                 children: [
                   Expanded(
@@ -180,22 +189,34 @@ class _RegisterStableViewState extends State<RegisterStableView> {
                 ],
               ),
               const SizedBox(height: 10),
+
+              // Mostrar imagen seleccionada o tomar foto
               _base64Image != null
                   ? Image.memory(
                 Uint8List.fromList(Base64Decoder().convert(_base64Image!)),
                 height: 150,
               )
                   : const Text("No hay imagen seleccionada"),
+
+              // Botón para tomar foto
               ElevatedButton(
                 onPressed: _takePhoto,
-                child: const Text("Tomar Foto"),
+                child: const Text("Tomar Foto", style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0A5A57), // Color de fondo
+                ),
               ),
               const SizedBox(height: 20),
+
+              // Botón de enviar (solo habilitado si hay imagen seleccionada)
               ElevatedButton(
-                onPressed: _isSending ? null : _submitData,
+                onPressed: _base64Image == null || _isSending ? null : _submitData,
                 child: _isSending
                     ? const CircularProgressIndicator()
-                    : const Text("Enviar"),
+                    : const Text("Enviar", style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0A5A57), // Color de fondo
+                ),
               ),
             ],
           ),

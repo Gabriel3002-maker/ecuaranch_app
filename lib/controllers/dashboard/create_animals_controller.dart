@@ -39,6 +39,7 @@ class CreateAnimalsController with ChangeNotifier {
         xStudioEstadoDeSalud1: animalDto.xStudioEstadoDeSalud1,
         xStudioUserId: animalDto.xStudioUserId,
         xStudioValue: animalDto.xStudioValue,
+        xStudioImage: animalDto.xStudioImage
       );
 
       Map<String, dynamic> response = await odooService.createAnimal(enrichedDto);

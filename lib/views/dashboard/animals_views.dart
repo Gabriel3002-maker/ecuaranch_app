@@ -24,6 +24,7 @@ class _AnimalsViewState extends State<AnimalsView> {
   @override
   Widget build(BuildContext context) {
     const themeColor = Color(0xFF6B8E23); // Verde oliva
+    const cardBackgroundColor = Color(0xFFF4F4F4); // Color para las cards
 
     return WillPopScope(
       onWillPop: () async {
@@ -31,27 +32,27 @@ class _AnimalsViewState extends State<AnimalsView> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: Colors.white, // Fondo blanco
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white, // Fondo blanco en el AppBar
-          automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
-              Navigator.pop(context); // Botón de retroceso
+              Navigator.pop(context);
             },
           ),
           title: const Text(
             'Animales Registrados',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold, // Texto en negrita
-              color: Colors.black, // Texto en color negro
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
+              icon: const Icon(Icons.notifications, color: Colors.black),
               onPressed: () {
                 // Acción de notificaciones
               },
@@ -96,6 +97,7 @@ class _AnimalsViewState extends State<AnimalsView> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                    color: cardBackgroundColor,
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Row(
@@ -125,28 +127,6 @@ class _AnimalsViewState extends State<AnimalsView> {
                                 Text('🐂 Género: ${animal['x_studio_genero'] ?? 'No disponible'}'),
                                 Text('💰 Valor: ${animal['x_studio_value'] ?? 'No disponible'}'),
                                 Text('❤️ Estado: ${animal['x_studio_estado_de_salud_1'] ?? 'No disponible'}'),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      // Aquí podrías navegar a una vista de detalles
-                                      // Navigator.pushNamed(context, '/animal-detail', arguments: animal);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Detalles de ${animal['x_name'] ?? 'el animal'}')),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.info_outline),
-                                    label: const Text("Detalles"),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: themeColor,
-                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                )
                               ],
                             ),
                           ),
