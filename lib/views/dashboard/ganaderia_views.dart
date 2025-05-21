@@ -103,7 +103,7 @@ class GanaderiaScreen extends StatelessWidget {
                   dashboardButton(
                     imagePath: 'assets/icons/animal_register.png',
                     label: 'Animal',
-                    onTap: () => Navigator.pushNamed(context, '/create-animal'),
+                    onTap: () => Navigator.pushNamed(context, '/create-partner-animal'),
                   ),
                   dashboardButton(
                     imagePath: 'assets/icons/list_stables.png',

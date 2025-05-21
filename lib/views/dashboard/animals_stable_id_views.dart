@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:ecuaranch/controllers/dashboard/animals_stable_id_controller.dart';
 import 'package:ecuaranch/views/dashboard/addRegisters/register_info_views.dart';
 import 'package:ecuaranch/views/dashboard/animal_detail_by_id_views.dart';
@@ -148,7 +149,7 @@ class AnimalsByStableView extends StatelessWidget {
                                 const SizedBox(height: 8),
                                 Text("Género: $gender"),
                                 Text("Uso: $use"),
-                                Text("Fecha creación: $createDate"),
+                                Text("Fecha creación: ${DateFormat('d \'de\' MMMM \'de\' y', 'es_ES').format(DateTime.parse(createDate))}"),
                                 Text("Valor: ${value.toString()}"),
                               ],
                             ),
@@ -178,7 +179,7 @@ class AnimalsByStableView extends StatelessWidget {
                                 },
                                 icon: const Icon(Icons.visibility, color: Colors.white),
                                 label: const Text(
-                                  "Ver más detalles",
+                                  "Detalles",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -198,48 +199,11 @@ class AnimalsByStableView extends StatelessWidget {
                                 },
                                 icon: const Icon(Icons.edit, color: Colors.white),
                                 label: const Text(
-                                  "Registrar información",
+                                  "Registrar",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: buttonColor, // Color verde
-                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                ),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Eliminar animal"),
-                                        content: const Text("¿Estás seguro de que deseas eliminar este animal?"),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context); // Cerrar el diálogo
-                                            },
-                                            child: const Text("Cancelar"),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              // Lógica de eliminación aquí
-                                              Navigator.pop(context); // Cerrar el diálogo
-                                            },
-                                            child: const Text("Eliminar"),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: const Icon(Icons.delete, color: Colors.white),
-                                label: const Text(
-                                  "Eliminar",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
                             ],
                           ),
                         ],

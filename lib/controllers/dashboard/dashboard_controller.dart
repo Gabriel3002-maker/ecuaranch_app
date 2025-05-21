@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ecuaranch/services/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather/weather.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,8 @@ import '../../settings/settings.dart';
 class DashboardController {
   final String apiKey = Config.weather;
   final String url = Config.baseUrl;
+  final OdooService _odooService = OdooService();
+
 
   // Obtener ubicación actual
   Future<Position> getCurrentLocation() async {
@@ -125,4 +128,30 @@ class DashboardController {
         return '🌈';
     }
   }
+
+  //Obtener Animales
+  Future<Map<String, dynamic>> getAnimalCount() async {
+    try {
+      // Wait for both macho and hembra data
+      final results = await Future.wait([
+        _odooService.getAnimalsByGenero('Macho'),
+        _odooService.getAnimalsByGenero('Hembra')
+      ]);
+
+      // Merging the results into a single map
+      final machoData = results[0];
+      final hembraData = results[1];
+
+      // Return a map with both data
+      return {
+        'macho': machoData['nro_animals'] ?? 0,
+        'hembra': hembraData['nro_animals'] ?? 0,
+        'total': (machoData['nro_animals'] ?? 0) + (hembraData['nro_animals'] ?? 0),
+      };
+    } catch (e) {
+      throw Exception('Error fetching animal count: $e');
+    }
+  }
+
+
 }

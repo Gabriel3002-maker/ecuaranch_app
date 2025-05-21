@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../../settings/settings.dart';
 
-
 class CreateAnimalsController with ChangeNotifier {
   final OdooService odooService = OdooService();
 
   final String _db = Config.databaseName;
-  final int _userId =  Config.userId;
+  final int _userId = Config.userId;
   final String _password = Config.password;
 
   bool _isLoading = false;
@@ -18,9 +17,18 @@ class CreateAnimalsController with ChangeNotifier {
   String _errorMessage = '';
   String get errorMessage => _errorMessage;
 
+  // Nuevas variables para almacenar el mensaje y el ID
+  String _successMessage = '';
+  String get successMessage => _successMessage;
+
+  int? _animalId;
+  int? get animalId => _animalId;
+
   Future<void> createAnimal(AnimalDto animalDto) async {
     _isLoading = true;
     _errorMessage = '';
+    _successMessage = '';
+    _animalId = null;  // Reiniciamos el animalId cada vez que se envíe el formulario
     notifyListeners();
 
     try {
@@ -37,17 +45,19 @@ class CreateAnimalsController with ChangeNotifier {
         xStudioCharField18c1io38ib86: animalDto.xStudioCharField18c1io38ib86,
         xStudioDestinadoA: animalDto.xStudioDestinadoA,
         xStudioEstadoDeSalud1: animalDto.xStudioEstadoDeSalud1,
-        xStudioUserId: animalDto.xStudioUserId,
+        xStudioUserId: _userId,
         xStudioValue: animalDto.xStudioValue,
-        xStudioImage: animalDto.xStudioImage
       );
 
       Map<String, dynamic> response = await odooService.createAnimal(enrichedDto);
 
       if (response['status'] == 'success') {
-        debugPrint("Registrado Exitosamente");
+        _successMessage = response['message'] ?? 'Animal creado exitosamente';
+        _animalId = response['animal_id']?[0];  // Accediendo al ID del animal
+        debugPrint("Registrado Exitosamente. Animal ID: $_animalId");
+      } else {
+        _errorMessage = 'No se pudo crear el animal';
       }
-
     } catch (e) {
       _errorMessage = 'Error al registrar el animal: $e';
     } finally {

@@ -7,14 +7,14 @@ import 'package:ecuaranch/model/partner.dart';
 import 'package:ecuaranch/services/services.dart';
 import 'package:ecuaranch/settings/settings.dart';
 
-class RegisterPersonView extends StatefulWidget {
-  const RegisterPersonView({super.key});
+class RegisterAnimalPartnerViews extends StatefulWidget {
+  const RegisterAnimalPartnerViews({super.key});
 
   @override
-  _RegisterPersonViewState createState() => _RegisterPersonViewState();
+  RegisterAnimalPartnerViewsState createState() => RegisterAnimalPartnerViewsState();
 }
 
-class _RegisterPersonViewState extends State<RegisterPersonView> {
+class RegisterAnimalPartnerViewsState extends State<RegisterAnimalPartnerViews> {
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -69,7 +69,7 @@ class _RegisterPersonViewState extends State<RegisterPersonView> {
       if (response is Map<String, dynamic>) {
         if (response['status'] == 'success' && response['partner_id'] != null && response['partner_id'].isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Persona Registrado con éxito")),
+            const SnackBar(content: Text("Animal Registrado con éxito")),
           );
 
           _formKey.currentState!.reset();
@@ -81,10 +81,10 @@ class _RegisterPersonViewState extends State<RegisterPersonView> {
             _base64Image = null;
           });
 
-          Navigator.pushReplacementNamed(context, '/dashboard');
+          Navigator.pushReplacementNamed(context, '/create-animal');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Error al registrar Persona")),
+            const SnackBar(content: Text("Error al registrar Animal")),
           );
         }
       } else {
@@ -117,7 +117,7 @@ class _RegisterPersonViewState extends State<RegisterPersonView> {
           },
         ),
         title: const Text(
-          'Registrar Persona',
+          'Registrar Animal',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,

@@ -11,14 +11,15 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final DashboardController controller = DashboardController();
-
+  late Future<Map<String, dynamic>> nAnimalMachoData;
+  late Future<Map<String, dynamic>> nAnimalHembraData;
   late Future<Map<String, dynamic>> weatherFuture;
   late Future<Map<String, dynamic>> financeFuture;
 
   @override
   void initState() {
     super.initState();
-    // Cargar los datos una vez al iniciar
+    // Inicializar los futures
     weatherFuture = controller.getWeather();
     financeFuture = controller.getMonthlySalesAndExpenses();
   }
@@ -78,7 +79,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
             ),
-
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -95,16 +95,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('120', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-                          SizedBox(height: 4),
-                          Text('Machos: 60 - Hembras: 60', style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
                       FutureBuilder<Map<String, dynamic>>(
-                        future: weatherFuture,  // Usando weatherFuture aquí
+                        future: controller.getAnimalCount(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());  // Centered loading indicator
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Text(
+                                'Error: ${snapshot.error}',
+                                style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          } else if (snapshot.hasData) {
+                            final machoCount = snapshot.data!['macho'] ?? 0;
+                            final hembraCount = snapshot.data!['hembra'] ?? 0;
+                            final totalAnimals = snapshot.data!['total'] ?? 0;
+
+                            return Padding(
+                              padding: const EdgeInsets.all(16), // Padding around the text
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Total de Animales: $totalAnimals',
+                                    style: const TextStyle(
+                                      color: Colors.white, // Text color changed to black
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),  // Add space between the rows
+                                  Text(
+                                    'Machos: $machoCount',
+                                    style: const TextStyle(
+                                      color: Colors.white, // Text color changed to black
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),  // Small space between the counts
+                                  Text(
+                                    'Hembras: $hembraCount',
+                                    style: const TextStyle(
+                                      color: Colors.white, // Text color changed to black
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            return const Center(
+                              child: Text(
+                                'No se han encontrado datos.',
+                                style: TextStyle(color: Colors.black, fontSize: 16), // Text color changed to black
+                              ),
+                            );
+                          }
+                        },
+                      ), // FutureBuilder para el clima
+                      FutureBuilder<Map<String, dynamic>>(
+                        future: weatherFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Column(
@@ -144,7 +195,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                 const SizedBox(height: 8),
 
-                // Producción y Finanzas
+                // Sección de Producción y Finanzas
                 Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 4,
@@ -152,7 +203,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: FutureBuilder<Map<String, dynamic>>(
-                      future: financeFuture,  // Usando financeFuture aquí
+                      future: financeFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
@@ -231,7 +282,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: dashboardButton(
                               imagePath: 'assets/icons/animal_register.png',
                               label: 'Registrar Animal',
-                              onTap: () => Navigator.pushNamed(context, '/create-animal'),
+                              onTap: () => Navigator.pushNamed(context, '/create-partner-animal'),
                             ),
                           ),
                         ],

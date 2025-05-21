@@ -16,8 +16,8 @@ import '../settings/settings.dart';
 class OdooService {
   final String url = "https://ecuaranch-backend.duckdns.org";
 
-  Future<Map<String, dynamic>> getUserFromOdoo(
-      String db, String username, String password) async {
+  Future<Map<String, dynamic>> getUserFromOdoo(String db, String username,
+      String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_user_from_odoo"),
@@ -40,80 +40,82 @@ class OdooService {
   }
 
 
-  Future<List<Map<String, dynamic>>> getStablesFromOdoo(
-    String db, String userId, String password,
-    {int offset = 0, int limit = 10}) async {
-  try {
-    final response = await http.post(
-      Uri.parse("$url/get_stables_from_odoo"),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({
-        "db": db,
-        "user_id": int.tryParse(userId) ?? 0,
-        "password": password,
-        "offset": offset,
-        "limit": limit,
-      }),
-    );
+  Future<List<Map<String, dynamic>>> getStablesFromOdoo(String db,
+      String userId, String password,
+      {int offset = 0, int limit = 10}) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/get_stables_from_odoo"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+          "offset": offset,
+          "limit": limit,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody = json.decode(response.body);
 
-      if (responseBody['status'] == 'success') {
-        final List<dynamic> stablesData = responseBody['animals'];
-        return List<Map<String, dynamic>>.from(stablesData);
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> stablesData = responseBody['animals'];
+          return List<Map<String, dynamic>>.from(stablesData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
       } else {
-        throw Exception('Error en la respuesta del servidor: ${responseBody['status']}');
+        throw Exception("Error al obtener datos del servidor");
       }
-    } else {
-      throw Exception("Error al obtener datos del servidor");
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
     }
-  } catch (e) {
-    throw Exception("Error de conexión: $e");
   }
-}
 
-Future<List<Map<String, dynamic>>> getAnimalsByStableIdFromOdoo({
-  required String db,
-  required int userId,
-  required String password,
-  required int stableId,
-  int offset = 0,
-  int limit = 10,
-}) async {
+  Future<List<Map<String, dynamic>>> getAnimalsByStableIdFromOdoo({
+    required String db,
+    required int userId,
+    required String password,
+    required int stableId,
+    int offset = 0,
+    int limit = 10,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$url/get_animals_by_stable_id'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'db': db,
+          'user_id': userId,
+          'password': password,
+          'stable_id': stableId,
+          'offset': offset,
+          'limit': limit,
+        }),
+      );
 
-  try {
-    final response = await http.post(
-      Uri.parse('$url/get_animals_by_stable_id'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'db': db,
-        'user_id': userId,
-        'password': password,
-        'stable_id': stableId,
-        'offset': offset,
-        'limit': limit,
-      }),
-    );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody = json.decode(response.body);
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseBody = json.decode(response.body);
-
-      if (responseBody['status'] == 'success') {
-        final List<dynamic> animalsData = responseBody['animals'];
-        return List<Map<String, dynamic>>.from(animalsData);
+        if (responseBody['status'] == 'success') {
+          final List<dynamic> animalsData = responseBody['animals'];
+          return List<Map<String, dynamic>>.from(animalsData);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
       } else {
-        throw Exception('Error en la respuesta del servidor: ${responseBody['status']}');
+        throw Exception(
+            'Error al obtener datos del servidor: ${response.statusCode}');
       }
-    } else {
-      throw Exception('Error al obtener datos del servidor: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error de conexión: $e');
     }
-  } catch (e) {
-    throw Exception('Error de conexión: $e');
   }
-}
 
 
   Future<Map<String, dynamic>> getAnimalDetailsById({
@@ -154,16 +156,15 @@ Future<List<Map<String, dynamic>>> getAnimalsByStableIdFromOdoo({
   }
 
 
-
-Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(String db,
+      String userId, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_animals_from_odoo"),
         headers: {"Content-Type": "application/json"},
         body: json.encode({
           "db": db,
-          "user_id":  int.tryParse(userId) ?? 0,
+          "user_id": int.tryParse(userId) ?? 0,
           "password": password,
         }),
       );
@@ -173,11 +174,13 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
 
         // Extraer la lista de 'stables' de la respuesta
         if (responseBody['status'] == 'success') {
-          final List<dynamic> stablesData = responseBody['animals'];  // Aquí obtenemos los estables
+          final List<
+              dynamic> stablesData = responseBody['animals']; // Aquí obtenemos los estables
           // Retornamos la lista de estables como una lista de Map<String, dynamic>
           return List<Map<String, dynamic>>.from(stablesData);
         } else {
-          throw Exception('Error en la respuesta del servidor: ${responseBody['status']}');
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
         }
       } else {
         throw Exception("Error al obtener datos del servidor");
@@ -197,7 +200,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
   }) async {
     final response = await http.post(
       Uri.parse('$url/get_information_animal_id_observation'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'db': db,
         'user_id': userId,
@@ -209,7 +212,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      return decoded;
     } else {
       throw Exception('Error al cargar el histórico del animal - Observation');
     }
@@ -226,7 +230,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
   }) async {
     final response = await http.post(
       Uri.parse('$url/get_information_animal_id_health'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'db': db,
         'user_id': userId,
@@ -238,9 +242,9 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception('Error al cargar el histórico del animal - health');
+      throw Exception('Error al cargar el histórico del animal - Health');
     }
   }
 
@@ -254,7 +258,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
   }) async {
     final response = await http.post(
       Uri.parse('$url/get_information_animal_id_grow'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'db': db,
         'user_id': userId,
@@ -266,7 +270,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception('Error al cargar el histórico del animal - Grow');
     }
@@ -282,7 +286,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
   }) async {
     final response = await http.post(
       Uri.parse('$url/get_information_animal_id_reproductionFollow'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'db': db,
         'user_id': userId,
@@ -294,12 +298,12 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception('Error al cargar el histórico del animal - Reproduction Follow');
+      throw Exception(
+          'Error al cargar el histórico del animal - Reproduction Follow');
     }
   }
-
 
   Future<Map<String, dynamic>> fetchAnimalHistoryFeeding({
     required String db,
@@ -311,7 +315,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
   }) async {
     final response = await http.post(
       Uri.parse('$url/get_information_animal_id_feeding'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'db': db,
         'user_id': userId,
@@ -323,7 +327,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception('Error al cargar el histórico del animal - Feeding');
     }
@@ -340,7 +344,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
   }) async {
     final response = await http.post(
       Uri.parse('$url/get_information_animal_id_reproduction'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'db': db,
         'user_id': userId,
@@ -352,12 +356,11 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception('Error al cargar el histórico del animal - Reproduction');
     }
   }
-
 
 
   Future<Map<String, dynamic>> createAnimal(AnimalDto animalDto) async {
@@ -368,7 +371,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
         body: json.encode(animalDto.toJson()),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return json.decode(response.body);
       } else {
         throw Exception("Error al obtener datos del servidor");
@@ -493,8 +496,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
   }
 
 
-  Future<List<Map<String, dynamic>>> getEventsFromOdoo(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getEventsFromOdoo(String db, String userId,
+      String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_events"),
@@ -526,8 +529,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
-  Future<List<Map<String, dynamic>>> getLeadsFromOdoo(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getLeadsFromOdoo(String db, String userId,
+      String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_crm"),
@@ -559,8 +562,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
-  Future<List<Map<String, dynamic>>> getExpensesFromOdoo(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getExpensesFromOdoo(String db,
+      String userId, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_expenses"),
@@ -592,8 +595,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
-  Future<List<Map<String, dynamic>>> getFactoryFromOdoo(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getFactoryFromOdoo(String db,
+      String userId, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_factory"),
@@ -625,8 +628,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
-  Future<List<Map<String, dynamic>>> getSalesFromOdoo(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getSalesFromOdoo(String db, String userId,
+      String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_sales"),
@@ -658,8 +661,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
-  Future<List<Map<String, dynamic>>> getWarehouseFromOdoo(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getWarehouseFromOdoo(String db,
+      String userId, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_Warehouses"),
@@ -692,7 +695,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
   }
 
   static Future<bool> createStable(StableData data) async {
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_stable");
+    final url = Uri.parse(
+        "https://ecuaranch-backend.duckdns.org/create_stable");
 
     final headers = {"Content-Type": "application/json"};
 
@@ -726,7 +730,7 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
-  static Future<bool> createPerson(Partner partner) async {
+  static Future<Map<String, dynamic>> createPerson(Partner partner) async {
     final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_person");
 
     final response = await http.post(
@@ -735,11 +739,16 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
       body: jsonEncode(partner.toJson()),
     );
 
-    return response.statusCode == 200;
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Error al registrar la persona');
+    }
   }
 
-  Future<Map<String, dynamic>> getMonthlySalesAndExpenses(
-      String db, String userId, String password) async {
+
+  Future<Map<String, dynamic>> getMonthlySalesAndExpenses(String db,
+      String userId, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_monthly_sales_and_expenses"),
@@ -774,8 +783,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
-  Future<List<Map<String, dynamic>>> getAnimalsHealthAlerts(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getAnimalsHealthAlerts(String db,
+      String userId, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_animals_health_alerts"),
@@ -807,8 +816,8 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
-  Future<List<Map<String, dynamic>>> getAnimalsWeightAlerts(
-      String db, String userId, String password) async {
+  Future<List<Map<String, dynamic>>> getAnimalsWeightAlerts(String db,
+      String userId, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_animals_weight_alerts"),
@@ -840,7 +849,43 @@ Future<List<Map<String, dynamic>>> getAnimalsFromOdoo(
     }
   }
 
+  Future<Map<String, dynamic>> getAnimalsByGenero(String genero) async {
+    final url = 'https://ecuaranch-backend.duckdns.org/get_nro_animals'; // API URL
 
+    final headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
 
+    // Create the body with db, user_id, password, and genero
+    final body = json.encode({
+      'db': 'ecuaRancht1',
+      'user_id': 2,
+      'password': 'gabriel@nextgensolutions.group',
+      'genero': genero, // Include genero in the body
+    });
+
+    try {
+      // Send the POST request with the URL, headers, and body
+      final response = await http.post(
+        Uri.parse('$url?genero=$genero'),  // Add genero as a query parameter
+        headers: headers,
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        // Parse the response body as JSON
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data;
+      } else {
+        throw Exception('Failed to load animals');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data from API: $e');
+    }
+  }
 
 }
+
+
+

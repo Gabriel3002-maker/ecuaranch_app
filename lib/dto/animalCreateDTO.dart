@@ -3,7 +3,7 @@ class AnimalDto {
   final int userId;
   final String password;
   final String xName;
-  final String xStudioPartnerId;
+  final int xStudioPartnerId;
   final String xStudioAlimentacionInicial1;
   final double xStudioPesoInicial;
   final String xStudioDateStart;
@@ -11,9 +11,8 @@ class AnimalDto {
   final String xStudioCharField18c1io38ib86;
   final String xStudioDestinadoA;
   final String xStudioEstadoDeSalud1;
-  final String xStudioUserId;
-  final double xStudioValue;
-  final String xStudioImage;
+  final int xStudioUserId;
+  final String xStudioValue;
 
   AnimalDto({
     required this.db,
@@ -30,7 +29,6 @@ class AnimalDto {
     required this.xStudioEstadoDeSalud1,
     required this.xStudioUserId,
     required this.xStudioValue,
-    required this.xStudioImage
   });
 
   // Convertir un objeto AnimalDto a un mapa JSON
@@ -50,7 +48,6 @@ class AnimalDto {
       "x_studio_estado_de_salud_1": xStudioEstadoDeSalud1,
       "x_studio_user_id": xStudioUserId,
       "x_studio_value": xStudioValue,
-      "x_studio_image": xStudioImage
     };
   }
 
@@ -70,8 +67,7 @@ class AnimalDto {
       xStudioDestinadoA: json['x_studio_destinado_a'],
       xStudioEstadoDeSalud1: json['x_studio_estado_de_salud_1'],
       xStudioUserId: json['x_studio_user_id'],
-      xStudioValue: json['x_studio_value'],
-      xStudioImage: json['x_studio_image']
+      xStudioValue: json['x_studio_value']
     );
   }
 }

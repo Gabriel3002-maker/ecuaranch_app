@@ -1,6 +1,7 @@
 import 'package:ecuaranch/views/dashboard/animals_views.dart';
 import 'package:ecuaranch/views/dashboard/create_animals_views.dart';
 import 'package:ecuaranch/views/dashboard/health_alert_views.dart';
+import 'package:ecuaranch/views/dashboard/historic/register_animal_partner_views.dart';
 import 'package:ecuaranch/views/dashboard/main_tab_views.dart';
 import 'package:ecuaranch/views/dashboard/stables_views.dart';
 import 'package:ecuaranch/views/dashboard/weight_alert_views.dart';
@@ -40,7 +41,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
-  // Llama al controlador para gestionar los permisos de ubicación
   PermissionController permissionController = PermissionController(navigatorKey);
   bool isLocationServiceEnabled = await permissionController.checkPermissionStatus();
 
@@ -281,7 +281,8 @@ class MyApp extends StatelessWidget {
         '/list-sales': (context) => const SalesViews(),
         '/list-warehouses': (context) => const WarehousesViews(),
         '/create-stables': (context) => const RegisterStableView(),
-        '/create-partner': (context) => const RegisterPersonView()
+        '/create-partner': (context) => const RegisterPersonView(),
+        '/create-partner-animal':(context) => const RegisterAnimalPartnerViews()
       },
     );
   }
