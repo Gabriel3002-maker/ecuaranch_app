@@ -106,93 +106,107 @@ class _AnimalsViewState extends State<AnimalsView> {
                     color: cardBackgroundColor,
                     child: Padding(
                       padding: const EdgeInsets.all(12),
-                      child: Row(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CircleAvatar(
-                            radius: 35,
-                            backgroundColor: themeColor.withOpacity(0.1),
-                            backgroundImage: imageProvider,
-                            child: imageProvider == null
-                                ? const Icon(Icons.pets, size: 30, color: Colors.grey)
-                                : null,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 35,
+                                backgroundColor: themeColor.withOpacity(0.1),
+                                backgroundImage: imageProvider,
+                                child: imageProvider == null
+                                    ? const Icon(Icons.pets, size: 30, color: Colors.grey)
+                                    : null,
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      animal['x_name'] ?? 'Sin nombre',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text('🐂 Género: ${animal['x_studio_genero'] ?? 'No disponible'}'),
+                                    Text('💰 Valor: ${animal['x_studio_value'] ?? 'No disponible'}'),
+                                    Text('❤️ Estado: ${animal['x_studio_estado_de_salud_1'] ?? 'No disponible'}'),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  animal['x_name'] ?? 'Sin nombre',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+
+                          const SizedBox(height: 12), // espacio entre info y botones
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: buttonColor,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AnimalDetailByIdView(
+                                          animalId: animalId,
+                                          db: Config.databaseName,
+                                          userId: Config.userId,
+                                          password: Config.password,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.visibility, color: Colors.white),
+                                  label: const Text(
+                                    "Detalles",
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ),
-                                const SizedBox(height: 6),
-                                Text('🐂 Género: ${animal['x_studio_genero'] ?? 'No disponible'}'),
-                                Text('💰 Valor: ${animal['x_studio_value'] ?? 'No disponible'}'),
-                                Text('❤️ Estado: ${animal['x_studio_estado_de_salud_1'] ?? 'No disponible'}'),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: buttonColor,
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => AnimalDetailByIdView(
-                                                animalId: animalId,
-                                                db: Config.databaseName,
-                                                userId: Config.userId,
-                                                password: Config.password,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.visibility, color: Colors.white),
-                                        label: const Text(
-                                          "Detalles",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: buttonColor,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: buttonColor,
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => RegisterInfoView(animalId: animalId),
-                                            ),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.edit, color: Colors.white),
-                                        label: const Text(
-                                          "Registrar",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => RegisterInfoView(animalId: animalId),
                                       ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit, color: Colors.white),
+                                  label: const Text(
+                                    "Registrar",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                   );
+
                 },
               ),
             );

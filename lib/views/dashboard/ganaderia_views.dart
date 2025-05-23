@@ -55,23 +55,40 @@ class GanaderiaScreen extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: sectionTitleStyle),
-          const SizedBox(height: 8),
-          GridView.count(
-            crossAxisCount: 3,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            children: buttons,
+          if (title.trim().isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(title, style: sectionTitleStyle),
+            ),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: buttons
+                .map(
+                  (button) => SizedBox(
+                width: 100, // Ajusta esto según tu diseño
+                child: button,
+              ),
+            )
+                .toList(),
           ),
           const SizedBox(height: 20),
         ],
       );
     }
 
+
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'Panel Ganadero',
+          style: TextStyle(color: Colors.orange), // Texto en blanco para mejor contraste
+        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black), // Para que los íconos también sean blancos
+      ),
+
       body: Stack(
         children: [
           Positioned.fill(
@@ -94,47 +111,48 @@ class GanaderiaScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                sectionCard("", [
+                sectionCard("Registro de Datos", [
                   dashboardButton(
                     imagePath: 'assets/icons/person_register.png',
-                    label: 'Persona',
+                    label: 'Registrar Persona',
                     onTap: () => Navigator.pushNamed(context, '/create-partner'),
                   ),
                   dashboardButton(
                     imagePath: 'assets/icons/animal_register.png',
-                    label: 'Animal',
+                    label: 'Registrar Animal',
                     onTap: () => Navigator.pushNamed(context, '/create-partner-animal'),
                   ),
                   dashboardButton(
                     imagePath: 'assets/icons/list_stables.png',
-                    label: 'Granja',
+                    label: 'Registrar Granja',
                     onTap: () => Navigator.pushNamed(context, '/create-stables'),
                   ),
                 ]),
-                sectionCard("", [
+                sectionCard("Gestión de Oportunidades", [
                   dashboardButton(
                     imagePath: 'assets/icons/oportunity.png',
-                    label: 'Oportunidades',
+                    label: 'Ver Oportunidades',
                     onTap: () => Navigator.pushNamed(context, '/list-leads'),
                   ),
                 ]),
-                sectionCard(" ", [
+                sectionCard("Revisión y Administración", [
                   dashboardButton(
                     imagePath: 'assets/icons/production.png',
-                    label: 'Fábricas',
+                    label: 'Lista de Fábricas',
                     onTap: () => Navigator.pushNamed(context, '/list-factory'),
                   ),
                   dashboardButton(
                     imagePath: 'assets/icons/sales.png',
-                    label: 'Gastos',
+                    label: 'Registro de Gastos',
                     onTap: () => Navigator.pushNamed(context, '/list-expenses'),
                   ),
                   dashboardButton(
                     imagePath: 'assets/icons/manufacturing.png',
-                    label: 'Almacenes',
+                    label: 'Administrar Almacenes',
                     onTap: () => Navigator.pushNamed(context, '/list-warehouses'),
                   ),
                 ]),
+
               ],
             ),
           ),

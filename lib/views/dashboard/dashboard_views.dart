@@ -85,7 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Container(
                   decoration: BoxDecoration(
                     image: const DecorationImage(
-                      image: AssetImage('assets/icons/fondo.png'),
+                      image: AssetImage('assets/icons/backgroud_home.jpg'),
                       fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(Colors.black26, BlendMode.darken),
                     ),
@@ -99,12 +99,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         future: controller.getAnimalCount(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());  // Centered loading indicator
+                            return const Center(child: CircularProgressIndicator());  // Centered loading indicator
                           } else if (snapshot.hasError) {
                             return Center(
                               child: Text(
                                 'Error: ${snapshot.error}',
-                                style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+                                style: const TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                             );
                           } else if (snapshot.hasData) {
@@ -117,32 +117,82 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Total de Animales: $totalAnimals',
-                                    style: const TextStyle(
-                                      color: Colors.white, // Text color changed to black
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '$totalAnimals',
+                                        style: const TextStyle(
+                                          color: Color(0xFFF08235), // naranja
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      const Text(
+                                        'Ejemplares',
+                                        style: TextStyle(
+                                          color: Color(0xFF60463D), // marrón oscuro
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 8),  // Add space between the rows
-                                  Text(
-                                    'Machos: $machoCount',
-                                    style: const TextStyle(
-                                      color: Colors.white, // Text color changed to black
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),  // Small space between the counts
-                                  Text(
-                                    'Hembras: $hembraCount',
-                                    style: const TextStyle(
-                                      color: Colors.white, // Text color changed to black
-                                      fontSize: 16,
-                                    ),
+
+                                  const SizedBox(height: 10), // espacio antes de machos y hembras
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center, // centra el grupo
+                                    children: [
+                                      Column(
+                                        children: [
+                                          const Text(
+                                            'Machos',
+                                            style: TextStyle(
+                                              color: Color(0xFF929292), // gris
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '$machoCount',
+                                            style: const TextStyle(
+                                              color: Color(0xFF929292),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      const SizedBox(width: 10), // espacio horizontal entre machos y hembras
+
+                                      Column(
+                                        children: [
+                                          const Text(
+                                            'Hembras',
+                                            style: TextStyle(
+                                              color: Color(0xFF929292),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            '$hembraCount',
+                                            style: const TextStyle(
+                                              color: Color(0xFF929292),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
+
                             );
                           } else {
                             return const Center(
@@ -264,7 +314,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           Expanded(
                             child: dashboardButton(
-                              imagePath: 'assets/icons/list_stables.png',
+                              imagePath: 'assets/icons/manufacturing.png',
                               label: 'Listado de Establos',
                               onTap: () => Navigator.pushNamed(context, '/list-stables'),
                             ),
@@ -301,12 +351,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     dashboardButton(
                       imagePath: 'assets/icons/health.png',
-                      label: 'Alertas Salud',
+                      label: 'Alerta Salud',
                       onTap: () => Navigator.pushNamed(context, '/alert-heath'),
                     ),
                     dashboardButton(
                       imagePath: 'assets/icons/weight.png',
-                      label: 'Alertas Peso',
+                      label: 'Alerta  Peso',
                       onTap: () => Navigator.pushNamed(context, '/alert-weight'),
                     ),
                     dashboardButton(

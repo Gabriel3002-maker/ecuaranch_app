@@ -1,9 +1,9 @@
-import 'dart:convert';  // Para Base64Decoder
-import 'dart:typed_data'; // Para Uint8List
+import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:ecuaranch/views/livestock/register_person_views.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ecuaranch/views/livestock/register_person_views.dart';
 import 'package:ecuaranch/model/create_stable.dart';
 import 'package:ecuaranch/services/services.dart';
 import 'package:ecuaranch/settings/settings.dart';
@@ -71,13 +71,12 @@ class _RegisterStableViewState extends State<RegisterStableView> {
     }
   }
 
-  // Método para limpiar el formulario
   void _clearForm() {
     _nameController.clear();
     setState(() {
       _selectedPerson = null;
       _base64Image = null;
-      _selectedDate = DateTime(2024, 1, 12);  // Fecha predeterminada
+      _selectedDate = DateTime(2024, 1, 12);
     });
   }
 
@@ -89,9 +88,7 @@ class _RegisterStableViewState extends State<RegisterStableView> {
       return;
     }
 
-    setState(() {
-      _isSending = true;
-    });
+    setState(() => _isSending = true);
 
     final stableData = StableData(
       db: Config.databaseName,
@@ -105,122 +102,156 @@ class _RegisterStableViewState extends State<RegisterStableView> {
 
     final success = await OdooService.createStable(stableData);
 
-    setState(() {
-      _isSending = false;
-    });
+    setState(() => _isSending = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(success ? "Enviado con éxito" : "Error al enviar")),
     );
 
-    if (success) {
-      // Limpiar el formulario si se envió correctamente
-      _clearForm();
-    }
+    if (success) _clearForm();
+  }
+
+  InputDecoration _customInputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(
+        color: Color(0xFF0A5A57),
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey.shade300, width: 2),
+      ),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Color(0xFF0A5A57), width: 3),
+      ),
+      filled: true,
+      fillColor: Colors.grey.shade100,
+      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    Uint8List? imageBytes = _base64Image != null ? base64Decode(_base64Image!) : null;
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Registrar Establo")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              // Campo Nombre
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Ingrese un nombre' : null,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Registrar Establo",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.06,
+              child: Image.asset(
+                'assets/icons/Logo@300x.png',
+                fit: BoxFit.contain,
+                alignment: Alignment.center,
               ),
-              const SizedBox(height: 10),
-
-              // Dropdown para seleccionar Persona
-              DropdownButtonFormField<Person>(
-                value: _selectedPerson,
-                items: _persons.map((person) {
-                  return DropdownMenuItem<Person>(
-                    value: person,
-                    child: Text(person.name),
-                  );
-                }).toList(),
-                onChanged: (person) {
-                  setState(() {
-                    _selectedPerson = person;
-                  });
-                },
-                decoration: const InputDecoration(labelText: 'Seleccione Persona'),
-                validator: (value) => value == null ? 'Seleccione una persona' : null,
-              ),
-              const SizedBox(height: 10),
-
-              // Botón para registrar nueva persona
-              if (_selectedPerson == null)
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const RegisterPersonView()),
-                    );
-                  },
-                  child: const Text('Registrar nueva persona', style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A5A57), // Color de fondo
-                  ),
-                ),
-              const SizedBox(height: 10),
-
-              // Selección de fecha
-              Row(
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: ListView(
                 children: [
-                  Expanded(
-                    child: Text(
-                      DateFormat('yyyy-MM-dd').format(_selectedDate),
-                      style: const TextStyle(fontSize: 16),
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: _customInputDecoration('Nombre'),
+                    validator: (value) => value == null || value.isEmpty ? 'Ingrese un nombre' : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  DropdownButtonFormField<Person>(
+                    value: _selectedPerson,
+                    decoration: _customInputDecoration('Persona Encargada'),
+                    items: _persons.map((person) {
+                      return DropdownMenuItem(
+                        value: person,
+                        child: Text(person.name),
+                      );
+                    }).toList(),
+                    onChanged: (person) => setState(() => _selectedPerson = person),
+                    validator: (value) => value == null ? 'Seleccione una persona' : null,
+                  ),
+                  const SizedBox(height: 10),
+
+                  if (_selectedPerson == null)
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterPersonView()));
+                      },
+                      child: const Text('Registrar nueva persona'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0A5A57),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          DateFormat('yyyy-MM-dd').format(_selectedDate),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: _pickDate,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: _takePhoto,
+                      icon: const Icon(Icons.camera_alt, color: Colors.white),
+                      label: const Text("Tomar Foto", style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0A5A57),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: _pickDate,
+                  const SizedBox(height: 16),
+
+                  if (imageBytes != null)
+                    Image.memory(imageBytes, height: 150)
+                  else
+                    const Text("No hay imagen seleccionada", textAlign: TextAlign.center),
+
+                  const SizedBox(height: 20),
+
+                  _isSending
+                      ? const Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
+                    onPressed: _base64Image != null ? _submitData : null,
+                    child: const Text("Enviar", style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0A5A57),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
-
-              // Mostrar imagen seleccionada o tomar foto
-              _base64Image != null
-                  ? Image.memory(
-                Uint8List.fromList(Base64Decoder().convert(_base64Image!)),
-                height: 150,
-              )
-                  : const Text("No hay imagen seleccionada"),
-
-              // Botón para tomar foto
-              ElevatedButton(
-                onPressed: _takePhoto,
-                child: const Text("Tomar Foto", style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A5A57), // Color de fondo
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Botón de enviar (solo habilitado si hay imagen seleccionada)
-              ElevatedButton(
-                onPressed: _base64Image == null || _isSending ? null : _submitData,
-                child: _isSending
-                    ? const CircularProgressIndicator()
-                    : const Text("Enviar", style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A5A57), // Color de fondo
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

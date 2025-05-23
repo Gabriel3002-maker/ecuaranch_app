@@ -25,11 +25,31 @@ class _RegisterPersonViewState extends State<RegisterPersonView> {
   String? _base64Image;
   bool _isSubmitting = false;
 
-  // Función para seleccionar una imagen
+  // Estilo personalizado para los campos de texto
+  InputDecoration _customInputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(
+        color: Color(0xFF0A5A57),
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey.shade300, width: 2),
+      ),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Color(0xFF0A5A57), width: 3),
+      ),
+      filled: true,
+      fillColor: Colors.grey.shade100,
+      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+    );
+  }
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
-      source: ImageSource.camera, // o ImageSource.gallery si prefieres galería
+      source: ImageSource.camera,
       maxWidth: 600,
     );
 
@@ -41,7 +61,6 @@ class _RegisterPersonViewState extends State<RegisterPersonView> {
     }
   }
 
-  // Función para enviar el formulario
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate() || _base64Image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -69,7 +88,7 @@ class _RegisterPersonViewState extends State<RegisterPersonView> {
       if (response is Map<String, dynamic>) {
         if (response['status'] == 'success' && response['partner_id'] != null && response['partner_id'].isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Persona Registrado con éxito")),
+            const SnackBar(content: Text("Persona Registrada con éxito")),
           );
 
           _formKey.currentState!.reset();
@@ -131,122 +150,99 @@ class _RegisterPersonViewState extends State<RegisterPersonView> {
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/icons/Logo@300x.png'),
-            fit: BoxFit.contain,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06,
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png',
+                    width: 260,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                // Campo Nombre (Obligatorio)
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre',
-                    labelStyle: TextStyle(color: Color(0xFF0A5A57)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: _customInputDecoration('Nombre'),
+                    validator: (value) => value == null || value.isEmpty ? 'Por favor ingrese el nombre' : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: _customInputDecoration('Email'),
+                    validator: (value) => value == null || value.isEmpty ? 'Por favor ingrese el email' : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  TextFormField(
+                    controller: _phoneController,
+                    decoration: _customInputDecoration('Teléfono'),
+                  ),
+                  const SizedBox(height: 16),
+
+                  TextFormField(
+                    controller: _mobileController,
+                    decoration: _customInputDecoration('Móvil'),
+                  ),
+                  const SizedBox(height: 16),
+
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: _pickImage,
+                      icon: const Icon(Icons.camera_alt, color: Colors.white),
+                      label: const Text("Tomar o seleccionar foto", style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0A5A57),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
                     ),
                   ),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Por favor ingrese el nombre'
-                      : null,
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
-                // Campo Email (Obligatorio)
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(color: Color(0xFF0A5A57)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Por favor ingrese el email'
-                      : null,
-                ),
-                const SizedBox(height: 16),
+                  if (imageBytes != null)
+                    Image.memory(imageBytes, height: 150)
+                  else
+                    const Text("No hay imagen seleccionada", style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
 
-                // Campo Teléfono (Opcional)
-                TextFormField(
-                  controller: _phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Teléfono',
-                    labelStyle: TextStyle(color: Color(0xFF0A5A57)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
-                // Campo Móvil (Opcional)
-                TextFormField(
-                  controller: _mobileController,
-                  decoration: const InputDecoration(
-                    labelText: 'Móvil',
-                    labelStyle: TextStyle(color: Color(0xFF0A5A57)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Botón para tomar foto
-                Center(
-                  child: ElevatedButton.icon(
-                    onPressed: _pickImage,
-                    icon: const Icon(Icons.camera_alt, color: Colors.white),
-                    label: const Text("Tomar o seleccionar foto", style: TextStyle(color: Colors.white)),
+                  _isSubmitting
+                      ? const Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
+                    onPressed: (_base64Image != null &&
+                        _nameController.text.isNotEmpty &&
+                        _emailController.text.isNotEmpty)
+                        ? _submitForm
+                        : null,
+                    child: const Text('Registrar', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0A5A57),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-
-                // Mostrar la imagen seleccionada
-                if (imageBytes != null)
-                  Image.memory(imageBytes, height: 150)
-                else
-                  const Text("No hay imagen seleccionada", style: TextStyle(color: Colors.grey)),
-
-                const SizedBox(height: 20),
-
-                // Botón de registrar
-                _isSubmitting
-                    ? const Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
-                  onPressed: (_base64Image != null && _nameController.text.isNotEmpty && _emailController.text.isNotEmpty)
-                      ? _submitForm
-                      : null,
-                  child: const Text('Registrar', style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A5A57),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -259,7 +259,37 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       title: 'Auth App',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xFF0A5A57),
+          brightness: Brightness.light,
+        ),
+        primaryColor: Color(0xFF0A5A57),
+        scaffoldBackgroundColor: Colors.white,
+        inputDecorationTheme: const InputDecorationTheme(
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF0A5A57), width: 2.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          labelStyle: TextStyle(color: Color(0xFF0A5A57)),
+          floatingLabelStyle: TextStyle(color: Color(0xFF0A5A57)),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF0A5A57),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Color(0xFF0A5A57),
+          selectionColor: Color(0x330A5A57),
+          selectionHandleColor: Color(0xFF0A5A57),
+        ),
       ),
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,

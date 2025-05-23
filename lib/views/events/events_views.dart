@@ -31,8 +31,12 @@ class _EventsScreenState extends State<EventsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Eventos'),
+        title: const Text(
+          'Eventos',
+          style: TextStyle(color: Colors.orange), // Texto en blanco para mejor contraste
+        ),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black), // Para que los íconos también sean blancos
       ),
       body: Consumer<GetEventsControllerController>(
         builder: (context, controller, child) {
