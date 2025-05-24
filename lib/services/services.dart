@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:ecuaranch/dto/animalCreateDTO.dart';
 import 'package:ecuaranch/dto/animalCreateFeedingDTO.dart';
 import 'package:ecuaranch/dto/animalCreateGrowthWeightDTO.dart';
@@ -7,6 +8,7 @@ import 'package:ecuaranch/dto/animalCreateObservationDTO.dart';
 import 'package:ecuaranch/dto/animalCreateProductionDTO.dart';
 import 'package:ecuaranch/dto/animalCreateReproductionFollowUpDTO.dart';
 import 'package:ecuaranch/model/create_stable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/partner.dart';
@@ -884,6 +886,87 @@ class OdooService {
       throw Exception('Error fetching data from API: $e');
     }
   }
+
+  Future<void> updateHealthAlerts(
+      String db,
+      String userId,
+      String password,
+      int alertId,
+      ) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/deactivate_health_alert"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+          "alert_id": alertId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final message = responseBody['message'] ?? 'Alerta desactivada correctamente';
+          debugPrint(message);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+
+  Future<void> updateWeightAlerts(
+      String db,
+      String userId,
+      String password,
+      int alertId,
+      ) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/deactivate_weight_alert"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "db": db,
+          "user_id": int.tryParse(userId) ?? 0,
+          "password": password,
+          "alert_id": alertId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody =
+        json.decode(utf8.decode(response.bodyBytes));
+
+        if (responseBody['status'] == 'success') {
+          final message = responseBody['message'] ?? 'Alerta desactivada correctamente';
+          debugPrint(message);
+        } else {
+          throw Exception(
+              'Error en la respuesta del servidor: ${responseBody['status']}');
+        }
+      } else {
+        throw Exception("Error al obtener datos del servidor");
+      }
+    } catch (e) {
+      throw Exception("Error de conexión: $e");
+    }
+  }
+
+
+
+
+
+
 
 }
 

@@ -32,4 +32,23 @@ class WeightAlertController extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> takeActionOnAlert(int alertId) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      await odooService.updateWeightAlerts(db, userId, password, alertId);
+
+      errorMessage = 'Alerta desactivada correctamente';
+      await fetchUserData();
+    } catch (e) {
+      errorMessage = 'Error: ${e.toString()}';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
 }

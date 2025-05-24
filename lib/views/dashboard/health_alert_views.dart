@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,12 +21,10 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
     _loadAlerts();
   }
 
-  // Método para cargar las alertas
   Future<void> _loadAlerts() async {
     await context.read<HealthAlertController>().fetchUserData();
   }
 
-  // Método para mostrar el diálogo de confirmación de acción
   void _showAlertActionDialog(BuildContext context, int alertId) {
     showDialog(
       context: context,
@@ -37,13 +37,29 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
             child: const Text("Cancelar"),
           ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
+            onPressed: () async {
+              Navigator.pop(context); // Cierra el diálogo
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Acción ejecutada para alerta ID: $alertId")),
+                const SnackBar(content: Text("Acción ejecutada para la alerta")),
               );
-              // Aquí podrías agregar el método del controlador
-              // controller.tomarAccion(alertId);
+
+              try {
+                // Llamamos al controlador para tomar la acción sobre la alerta
+                await context.read<HealthAlertController>().takeActionOnAlert(alertId);
+
+                // Si se ejecutó correctamente, mostramos el mensaje de éxito
+                final controller = context.read<HealthAlertController>();
+                if (controller.errorMessage.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(controller.errorMessage)),
+                  );
+                }
+
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Error: ${e.toString()}")),
+                );
+              }
             },
             child: const Text("Aceptar"),
           ),
@@ -54,7 +70,7 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
 
   @override
   Widget build(BuildContext context) {
-    const buttonColor = Color(0xFF0A5A57); // Color del fondo del botón
+    const buttonColor = Color(0xFF0A5A57);
     const addButtonColor = Color(0xFFFF5722); // Naranja para el botón de agregar
     const cardBackgroundColor = Color(0xFFF4F4F4); // Color de fondo para los cards
 
@@ -91,110 +107,130 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
             ),
           ],
         ),
-        body: Consumer<HealthAlertController>(
-          builder: (context, controller, child) {
-            if (controller.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (controller.errorMessage.isNotEmpty) {
-              return Center(child: Text(controller.errorMessage));
-            }
-
-            if (controller.health.isEmpty) {
-              return const Center(
-                child: Text(
-                  "No se encontraron alertas de salud.",
-                  style: TextStyle(fontSize: 18),
-                ),
-              );
-            }
-
-            return RefreshIndicator(
-              onRefresh: _loadAlerts,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(12),
-                itemCount: controller.health.length,
-                itemBuilder: (context, index) {
-                  final alert = controller.health[index];
-                  final alertName = alert['x_name'] ?? 'Sin nombre';
-                  final animalData = alert['x_studio_animal'] as List<dynamic>? ?? [];
-                  final animalName = animalData.length > 1 ? animalData[1] : 'Animal desconocido';
-                  final alertDate = alert['x_studio_fecha'] ?? 'Fecha no disponible';
-                  final alertId = alert['id'];
-
-                  // Obtener el animalId para navegación
-                  final animalId = animalData.isNotEmpty ? animalData[0] : null;
-
-                  return Card(
-                    elevation: 8,
-                    margin: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+        body: Stack(
+          children: [
+            // Fondo con el logo
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Center(
+                  child: Opacity(
+                    opacity: 0.06,
+                    child: Image.asset(
+                      'assets/images/logoecuaranch.png',
+                      width: 250,
+                      fit: BoxFit.contain,
                     ),
-                    color: cardBackgroundColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.warning, color: Colors.redAccent),
-                            title: Text(
-                              alertName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Animal: $animalName"),
-                                Text("Fecha: $alertDate"),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Icono para tomar acción sobre la alerta
-                                IconButton(
-                                  icon: const Icon(Icons.pan_tool, color: Colors.blue),
-                                  tooltip: "Tomar acción",
-                                  onPressed: () => _showAlertActionDialog(context, alertId),
-                                ),
-                                // Icono para ver los detalles del animal
-                                IconButton(
-                                  icon: const Icon(Icons.pets, color: Colors.green),
-                                  tooltip: "Ver detalles del animal",
-                                  onPressed: () {
-                                    if (animalId != null) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => AnimalDetailByIdView(
-                                            animalId: animalId,
-                                            db:  Config.databaseName,
-                                            userId:  Config.userId,
-                                            password: Config.password,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                  ),
+                ),
+              ),
+            ),
+            // Contenido de las alertas
+            Consumer<HealthAlertController>(
+              builder: (context, controller, child) {
+                if (controller.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (controller.errorMessage.isNotEmpty) {
+                  return Center(child: Text(controller.errorMessage));
+                }
+
+                if (controller.health.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No se encontraron alertas de salud.",
+                      style: TextStyle(fontSize: 18),
                     ),
                   );
-                },
-              ),
-            );
-          },
+                }
+
+                return RefreshIndicator(
+                  onRefresh: _loadAlerts,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: controller.health.length,
+                    itemBuilder: (context, index) {
+                      final alert = controller.health[index];
+                      final alertName = alert['x_name'] ?? 'Sin nombre';
+                      final animalData = alert['x_studio_animal'] as List<dynamic>? ?? [];
+                      final animalName = animalData.length > 1 ? animalData[1] : 'Animal desconocido';
+                      final alertDate = alert['x_studio_fecha'] ?? 'Fecha no disponible';
+                      final alertId = alert['id'];
+
+                      // Obtener el animalId para navegación
+                      final animalId = animalData.isNotEmpty ? animalData[0] : null;
+
+                      return Card(
+                        elevation: 8,
+                        margin: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        color: cardBackgroundColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.warning, color: Colors.redAccent),
+                                title: Text(
+                                  alertName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Animal: $animalName"),
+                                    Text("Fecha: $alertDate"),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Icono para tomar acción sobre la alerta
+                                    IconButton(
+                                      icon: const Icon(Icons.pan_tool, color: Colors.blue),
+                                      tooltip: "Tomar acción",
+                                      onPressed: () => _showAlertActionDialog(context, alertId),
+                                    ),
+                                    // Icono para ver los detalles del animal
+                                    IconButton(
+                                      icon: const Icon(Icons.pets, color: Colors.green),
+                                      tooltip: "Ver detalles del animal",
+                                      onPressed: () {
+                                        if (animalId != null) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => AnimalDetailByIdView(
+                                                animalId: animalId,
+                                                db:  Config.databaseName,
+                                                userId:  Config.userId,
+                                                password: Config.password,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
