@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ecuaranch/services/services.dart';
 
+import '../../dto/StableCreateDTO.dart';
 import '../../settings/settings.dart';
 
 class StablesController extends ChangeNotifier {
   final OdooService odooService = OdooService();
-  List<Map<String, dynamic>> stables = [];
+  List<Stable> stables = [];
+
+
   bool isLoading = false;
   String errorMessage = '';
 
@@ -21,13 +24,7 @@ class StablesController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      stables = await odooService.getStablesFromOdoo(
-        db,
-        userId,
-        password,
-        offset: offset,
-        limit: limit,
-      );
+      stables = await odooService.getStablesFromOdoo();
       errorMessage = '';
     } catch (e) {
       errorMessage = e.toString();

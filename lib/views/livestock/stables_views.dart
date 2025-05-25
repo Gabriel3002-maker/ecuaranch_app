@@ -37,7 +37,7 @@ class _RegisterStableViewState extends State<RegisterStableView> {
 
   Future<void> _loadPersons() async {
     try {
-      final persons = await OdooService.fetchPersons();
+      final persons = await OdooService.fetchUsers();
       setState(() {
         _persons = persons;
       });
@@ -96,7 +96,7 @@ class _RegisterStableViewState extends State<RegisterStableView> {
       password: Config.password,
       xName: _nameController.text,
       xStudioDate: _selectedDate.toIso8601String(),
-      xStudioPartnerId: _selectedPerson!.id,
+      xStudioPartnerId: _selectedPerson!.partnerIdValue!,
       xStudioImage: _base64Image!,
     );
 
@@ -108,7 +108,9 @@ class _RegisterStableViewState extends State<RegisterStableView> {
       SnackBar(content: Text(success ? "Enviado con éxito" : "Error al enviar")),
     );
 
-    if (success) _clearForm();
+    if (success) {
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    }
   }
 
   InputDecoration _customInputDecoration(String label) {

@@ -13,6 +13,8 @@ class AnimalDto {
   final String xStudioEstadoDeSalud1;
   final int xStudioUserId;
   final String xStudioValue;
+  final String xStudioEstabloAlQuePertenece;
+
 
   AnimalDto({
     required this.db,
@@ -29,7 +31,9 @@ class AnimalDto {
     required this.xStudioEstadoDeSalud1,
     required this.xStudioUserId,
     required this.xStudioValue,
+    required this.xStudioEstabloAlQuePertenece
   });
+
 
   // Convertir un objeto AnimalDto a un mapa JSON
   Map<String, dynamic> toJson() {
@@ -48,7 +52,9 @@ class AnimalDto {
       "x_studio_estado_de_salud_1": xStudioEstadoDeSalud1,
       "x_studio_user_id": xStudioUserId,
       "x_studio_value": xStudioValue,
-    };
+      "x_studio_establo_al_que_pertenece": xStudioEstabloAlQuePertenece
+
+  };
   }
 
   // Convertir un mapa JSON a un objeto AnimalDto
@@ -67,7 +73,8 @@ class AnimalDto {
       xStudioDestinadoA: json['x_studio_destinado_a'],
       xStudioEstadoDeSalud1: json['x_studio_estado_de_salud_1'],
       xStudioUserId: json['x_studio_user_id'],
-      xStudioValue: json['x_studio_value']
+      xStudioValue: json['x_studio_value'],
+      xStudioEstabloAlQuePertenece: json['x_studio_establo_al_que_pertenece']
     );
   }
 }

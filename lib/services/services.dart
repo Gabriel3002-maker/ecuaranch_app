@@ -11,6 +11,7 @@ import 'package:ecuaranch/model/create_stable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
+import '../dto/StableCreateDTO.dart';
 import '../model/partner.dart';
 import '../model/person.dart';
 import '../settings/settings.dart';
@@ -42,19 +43,15 @@ class OdooService {
   }
 
 
-  Future<List<Map<String, dynamic>>> getStablesFromOdoo(String db,
-      String userId, String password,
-      {int offset = 0, int limit = 10}) async {
+  Future<List<Stable>> getStablesFromOdoo() async {
     try {
       final response = await http.post(
         Uri.parse("$url/get_stables_from_odoo"),
         headers: {"Content-Type": "application/json"},
         body: json.encode({
-          "db": db,
-          "user_id": int.tryParse(userId) ?? 0,
-          "password": password,
-          "offset": offset,
-          "limit": limit,
+          "db": Config.databaseName,
+          "user_id": Config.userId,
+          "password": Config.password,
         }),
       );
 
@@ -63,10 +60,11 @@ class OdooService {
 
         if (responseBody['status'] == 'success') {
           final List<dynamic> stablesData = responseBody['animals'];
-          return List<Map<String, dynamic>>.from(stablesData);
+
+          // Convertimos cada mapa a un objeto Stable
+          return stablesData.map((json) => Stable.fromJson(json)).toList();
         } else {
-          throw Exception(
-              'Error en la respuesta del servidor: ${responseBody['status']}');
+          throw Exception('Error en la respuesta del servidor: ${responseBody['status']}');
         }
       } else {
         throw Exception("Error al obtener datos del servidor");
@@ -75,6 +73,9 @@ class OdooService {
       throw Exception("Error de conexión: $e");
     }
   }
+
+
+
 
   Future<List<Map<String, dynamic>>> getAnimalsByStableIdFromOdoo({
     required String db,
@@ -732,6 +733,28 @@ class OdooService {
     }
   }
 
+
+  static Future<List<Person>> fetchUsers() async {
+    final url = Uri.parse('https://ecuaranch-backend.duckdns.org/get_users');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "db": Config.databaseName,
+        "user_id": Config.userId,
+        "password": Config.password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonData = jsonDecode(response.body);
+      final List<dynamic> personList = jsonData['person'];
+      return personList.map((json) => Person.fromJson(json)).toList();
+    } else {
+      throw Exception('Error al obtener Datos');
+    }
+  }
+
   static Future<Map<String, dynamic>> createPerson(Partner partner) async {
     final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_person");
 
@@ -861,9 +884,9 @@ class OdooService {
 
     // Create the body with db, user_id, password, and genero
     final body = json.encode({
-      'db': 'ecuaRancht1',
-      'user_id': 2,
-      'password': 'gabriel@nextgensolutions.group',
+      'db': Config.databaseName,
+      'user_id': Config.userId,
+      'password': Config.password,
       'genero': genero, // Include genero in the body
     });
 

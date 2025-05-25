@@ -86,10 +86,8 @@ class _StablesViewState extends State<StablesView> {
                 itemCount: controller.stables.length,
                 itemBuilder: (context, index) {
                   final stable = controller.stables[index];
-                  final name = stable['x_name'] ?? 'Sin nombre';
-                  final description =
-                      stable['x_studio_related_field_80n_1io3dj80a'] ??
-                          'Sin descripción';
+                  final name = stable.name ?? 'Sin nombre';
+
 
                   return Card(
                     elevation: 8, // Mayor elevación para dar más profundidad
@@ -112,13 +110,6 @@ class _StablesViewState extends State<StablesView> {
                                 fontSize: 18,
                               ),
                             ),
-                            subtitle: Text(
-                              description,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
                           ),
                           const SizedBox(height: 8),
                           Align(
@@ -129,7 +120,7 @@ class _StablesViewState extends State<StablesView> {
                                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Mejor tamaño del botón
                               ),
                               onPressed: () {
-                                final stableId = stable['id'] ?? 0;
+                                final stableId = stable.id ?? 0;
 
                                 Navigator.push(
                                   context,

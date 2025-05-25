@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:ecuaranch/model/create_stable.dart';
+import 'package:ecuaranch/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:ecuaranch/controllers/dashboard/create_animals_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:ecuaranch/dto/animalCreateDTO.dart';
 
+import '../../dto/StableCreateDTO.dart';
 import '../../model/person.dart';
 import '../../services/services.dart';
 import 'package:intl/intl.dart'; // Paquete para manejar fechas
@@ -32,15 +35,25 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
   final _xStudioEstadoDeSalud1Controller = TextEditingController();
   final _xStudioUserIdController = TextEditingController();
   final _xStudioValueController = TextEditingController();
+  final _xStudioEstabloAlQuePerteneceController = TextEditingController();
+
+
 
   String? _selectedAlimentacion;
   String? _selectedGenero;
   String? _selectedDestinadoa;
   String? _selectedEstadoSalud;
 
+  Stable? _selectedStable;
+
+
+  List<Stable> _stables = [];
+
   List<Person> _persons = [];
   Person? _selectedPerson;
   Person? _selectedCodeAnimal;
+
+
 
   @override
   void initState() {
@@ -54,6 +67,12 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
       setState(() {
         _persons = persons;
       });
+
+      final stables = await OdooService().getStablesFromOdoo();
+      setState(() {
+        _stables = stables;
+      });
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Error al cargar personas")),
@@ -80,8 +99,10 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
       xStudioCharField18c1io38ib86: _xStudioCharField18c1io38ib86Controller.text,
       xStudioDestinadoA: _xStudioDestinadoAController.text,
       xStudioEstadoDeSalud1: _xStudioEstadoDeSalud1Controller.text,
-      xStudioUserId: userId, // user_id passed as integer but converted to string in DTO
+      xStudioUserId: userId,
       xStudioValue: _xStudioValueController.text,
+      xStudioEstabloAlQuePertenece: _xStudioEstabloAlQuePerteneceController.text
+
     );
 
     await controller.createAnimal(animalDto);
@@ -196,6 +217,27 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
                     });
                   },
                   decoration: const InputDecoration(labelText: 'Seleccione el Codigo'),
+                ),
+
+
+                DropdownButtonFormField<Stable>(
+
+                  items: _stables.map((stable) {
+                    return DropdownMenuItem<Stable>(
+                      value: stable,
+                      child: Text(stable.name),
+                    );
+                  }).toList(),
+                  onChanged: (stable) {
+                    setState(() {
+                      _selectedStable = stable;
+                      _xStudioEstabloAlQuePerteneceController.text = stable?.id.toString() ?? '';
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Establo al que pertenece',
+                    prefixIcon: Icon(Icons.home_work),
+                  ),
                 ),
 
 
@@ -334,3 +376,4 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
     );
   }
 }
+
