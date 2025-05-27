@@ -1,27 +1,29 @@
-// controllers/notification_controller.dart
-import 'dart:async';
 import 'package:flutter/material.dart';
 
+import '../notifications/notification_helper.dart';
 import '../services/websocket.service.dart';
 
-class NotificationController with ChangeNotifier {
-  final WebSocketService _webSocketService;
-  List<String> notificaciones = [];
+class NotificationController extends ChangeNotifier {
+  late final WebSocketService _webSocketService;
+  final List<String> _messages = [];
 
-  NotificationController(String wsUrl)
-      : _webSocketService = WebSocketService(wsUrl) {
-    _webSocketService.startListening();
+  List<String> get messages => _messages;
+
+  NotificationController(String url) {
+    _webSocketService = WebSocketService(url);
     _webSocketService.messages.listen((message) {
-      notificaciones.add(message);
-      notifyListeners();  // Notifica a los listeners que hay cambios
+      _messages.add(message);
+      NotificationHelper.showNotification("Nueva Alerta", message);
+      notifyListeners();
     });
+    _webSocketService.startListening();
   }
 
-  List<String> get getNotificaciones => notificaciones;
-
-  // Dispose cuando ya no necesites el controlador
+  @override
   void dispose() {
     _webSocketService.dispose();
     super.dispose();
   }
 }
+
+

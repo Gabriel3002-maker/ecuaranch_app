@@ -33,6 +33,7 @@ import 'package:ecuaranch/views/auth/login_views.dart';
 import 'package:ecuaranch/views/auth/register_views.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'controllers/notification_controller.dart';
+import 'notifications/notification_helper.dart';
 
 // Global key to access Navigator's context
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -40,6 +41,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  await NotificationHelper.initialize();
 
   PermissionController permissionController = PermissionController(navigatorKey);
   bool isLocationServiceEnabled = await permissionController.checkPermissionStatus();

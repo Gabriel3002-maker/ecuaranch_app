@@ -9,22 +9,23 @@ class WebSocketService {
 
   WebSocketService(String url) : _channel = WebSocketChannel.connect(Uri.parse(url));
 
-  // Stream para enviar notificaciones cuando se recibe un mensaje
   Stream<String> get messages => _messageStreamController.stream;
 
-  // Conectar al WebSocket y escuchar mensajes
   void startListening() {
     _channel.stream.listen((data) {
+      print("📩 WebSocket recibido: $data"); // ✅
+
       try {
         final Map<String, dynamic> parsedData = jsonDecode(data);
-        // Aquí puedes procesar los datos y enviar notificaciones
         String notification = _parseMessage(parsedData);
+        print("🔔 Notificación parseada: $notification"); // ✅
         _messageStreamController.add(notification);
       } catch (e) {
         print("❌ Error al procesar mensaje: $e");
       }
     });
   }
+
 
   // Método para procesar el mensaje JSON
   String _parseMessage(Map<String, dynamic> data) {

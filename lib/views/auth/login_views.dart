@@ -103,53 +103,65 @@ class LoginScreen extends StatelessWidget {
                       onPressed: controller.isLoading
                           ? null
                           : () async {
-                              controller.setUsername(usernameController.text);
-                              controller.setPassword(passwordController.text);
+                        controller.setUsername(usernameController.text);
+                        controller.setPassword(passwordController.text);
 
-                              await controller.fetchUserData();
+                        await controller.fetchUserData();
 
-                              if (controller.userData != null &&
-                                  controller.userData?['status'] == 'success') {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const MainTabScreen(),
-                                  ),
-                                );
-                              } else if (controller.errorMessage != null) {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    title: const Text("Error"),
-                                    content: Text(controller.errorMessage!),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context),
-                                        child: const Text("Aceptar"),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            },
+                        // Verifica si la respuesta es válida
+                        if (controller.userData != null &&
+                            controller.userData?['status'] == 'success' &&
+                            controller.userData?['user_id'] != false &&
+                            controller.userData?['user_id'] != null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                              const MainTabScreen(),
+                            ),
+                          );
+                        } else if (controller.userData?['user_id'] == false ||
+                            controller.userData?['user_id'] == null) {
+                          // Usuario o contraseña incorrectos
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Usuario o contraseña incorrectos."),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (controller.errorMessage != null) {
+                          // Otro tipo de error (por ejemplo, conexión)
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: const Text("Error"),
+                              content: Text(controller.errorMessage!),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text("Aceptar"),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
                       child: controller.isLoading
                           ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
                           : const Text(
-                              'Iniciar sesión',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
+                        'Iniciar sesión',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   );
                 },
