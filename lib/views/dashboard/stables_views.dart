@@ -14,7 +14,9 @@ class _StablesViewState extends State<StablesView> {
   @override
   void initState() {
     super.initState();
-    _loadStables();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadStables();
+    });
   }
 
   Future<void> _loadStables() async {
@@ -23,9 +25,8 @@ class _StablesViewState extends State<StablesView> {
 
   @override
   Widget build(BuildContext context) {
-    const buttonColor = Color(0xFF0A5A57); // Color del fondo del botón "Ver animales asignados"
-    const addButtonColor = Color(0xFFFF5722); // Naranja para el botón de agregar
-    const cardBackgroundColor = Color(0xFFF4F4F4); // Color de fondo para los cards
+    const buttonColor = Color(0xFF0A5A57);
+    const cardBackgroundColor = Color(0xFFF4F4F4);
 
     return WillPopScope(
       onWillPop: () async {
@@ -33,27 +34,25 @@ class _StablesViewState extends State<StablesView> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: Colors.white, // Fondo blanco
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white, // Fondo blanco en el AppBar
-          automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
-            onPressed: () {
-              Navigator.pop(context); // Botón de retroceso
-            },
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
           ),
           title: const Text(
             'Listado de Establo',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold, // Texto en negrita
-              color: Colors.black, // Texto en color negro
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
+              icon: const Icon(Icons.notifications, color: Colors.black),
               onPressed: () {
                 // Acción de notificaciones
               },
@@ -67,7 +66,23 @@ class _StablesViewState extends State<StablesView> {
             }
 
             if (controller.errorMessage.isNotEmpty) {
-              return Center(child: Text(controller.errorMessage));
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      controller.errorMessage,
+                      style: const TextStyle(fontSize: 16, color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: _loadStables,
+                      child: const Text('Reintentar'),
+                    ),
+                  ],
+                ),
+              );
             }
 
             if (controller.stables.isEmpty) {
@@ -88,16 +103,15 @@ class _StablesViewState extends State<StablesView> {
                   final stable = controller.stables[index];
                   final name = stable.name ?? 'Sin nombre';
 
-
                   return Card(
-                    elevation: 8, // Mayor elevación para dar más profundidad
-                    margin: const EdgeInsets.symmetric(vertical: 12), // Más espacio vertical
+                    elevation: 8,
+                    margin: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16), // Bordes más redondeados
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    color: cardBackgroundColor, // Color de fondo del card
+                    color: cardBackgroundColor,
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0), // Más espacio dentro del card
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -116,8 +130,8 @@ class _StablesViewState extends State<StablesView> {
                             alignment: Alignment.centerRight,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: buttonColor, // Fondo del botón verde oscuro
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Mejor tamaño del botón
+                                backgroundColor: buttonColor,
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                               ),
                               onPressed: () {
                                 final stableId = stable.id ?? 0;
@@ -127,8 +141,8 @@ class _StablesViewState extends State<StablesView> {
                                   MaterialPageRoute(
                                     builder: (_) => AnimalsByStableView(
                                       stableId: stableId,
-                                      db: 'ecuaRanch', // reemplaza según tu flujo
-                                      userId: 2, // puedes obtenerlo de AuthProvider
+                                      db: 'ecuaRanch',
+                                      userId: 2,
                                       password: 'gabriel@nextgensolutions.group',
                                     ),
                                   ),
@@ -136,10 +150,7 @@ class _StablesViewState extends State<StablesView> {
                               },
                               child: const Text(
                                 "Ver animales asignados",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white, // Texto del botón en blanco
-                                ),
+                                style: TextStyle(fontSize: 16, color: Colors.white),
                               ),
                             ),
                           ),
@@ -157,7 +168,7 @@ class _StablesViewState extends State<StablesView> {
             Navigator.pushNamed(context, '/create-stables');
           },
           backgroundColor: Colors.orange,
-          child: const Icon(Icons.add, color: Colors.white,),
+          child: const Icon(Icons.add, color: Colors.white),
         ),
       ),
     );

@@ -33,6 +33,7 @@ import 'package:ecuaranch/views/auth/login_views.dart';
 import 'package:ecuaranch/views/auth/register_views.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'controllers/notification_controller.dart';
+import 'database/db_helper.dart';
 import 'notifications/notification_helper.dart';
 
 // Global key to access Navigator's context
@@ -42,6 +43,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await NotificationHelper.initialize();
+  final db = await DBHelper.instance.database;
 
   PermissionController permissionController = PermissionController(navigatorKey);
   bool isLocationServiceEnabled = await permissionController.checkPermissionStatus();
@@ -54,8 +56,8 @@ void main() async {
         fallbackLocale: const Locale('en', 'US'),
         child: MultiProvider(
           providers: [
-            ChangeNotifierProvider(create: (_) => UserController()),
-            ChangeNotifierProvider(create: (_) => StablesController()),
+            ChangeNotifierProvider(create: (_) => UserController(db)),
+            ChangeNotifierProvider(create: (_) => StablesController(db)),
             ChangeNotifierProvider(create: (_) => AnimalsController()),
             ChangeNotifierProvider(create: (_) => CreateAnimalsController()),
             ChangeNotifierProvider(create: (_) => GetEventsControllerController()),

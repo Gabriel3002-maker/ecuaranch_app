@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ecuaranch/controllers/auth/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,35 @@ class LoginScreen extends StatelessWidget {
                   height: 120,
                 ),
               ),
+
+              const SizedBox(height: 16),
+
+              StreamBuilder<ConnectivityResult>(
+                stream: Connectivity().onConnectivityChanged.map((list) => list.first),
+                builder: (context, snapshot) {
+                  final hasInternet = snapshot.hasData && snapshot.data != ConnectivityResult.none;
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.circle,
+                        size: 14,
+                        color: hasInternet ? Colors.green : Colors.red,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        hasInternet ? "Conectado" : "Sin conexión",
+                        style: TextStyle(
+                          color: hasInternet ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+
               const SizedBox(height: 20),
 
               const Center(
@@ -41,6 +71,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(height: 30),
 
               const Text(
@@ -52,7 +83,6 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-
               TextField(
                 controller: usernameController,
                 decoration: InputDecoration(
@@ -63,6 +93,7 @@ class LoginScreen extends StatelessWidget {
                   fillColor: Colors.white,
                 ),
               ),
+
               const SizedBox(height: 20),
 
               const Text(
@@ -74,7 +105,6 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-
               TextField(
                 controller: passwordController,
                 obscureText: true,
@@ -86,6 +116,7 @@ class LoginScreen extends StatelessWidget {
                   fillColor: Colors.white,
                 ),
               ),
+
               const SizedBox(height: 30),
 
               Consumer<UserController>(
@@ -106,31 +137,16 @@ class LoginScreen extends StatelessWidget {
                         controller.setUsername(usernameController.text);
                         controller.setPassword(passwordController.text);
 
-                        await controller.fetchUserData();
+                        await controller.login();
 
-                        // Verifica si la respuesta es válida
-                        if (controller.userData != null &&
-                            controller.userData?['status'] == 'success' &&
-                            controller.userData?['user_id'] != false &&
-                            controller.userData?['user_id'] != null) {
+                        if (controller.userId != null) {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                              const MainTabScreen(),
-                            ),
-                          );
-                        } else if (controller.userData?['user_id'] == false ||
-                            controller.userData?['user_id'] == null) {
-                          // Usuario o contraseña incorrectos
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Usuario o contraseña incorrectos."),
-                              backgroundColor: Colors.red,
+                              builder: (context) => const MainTabScreen(),
                             ),
                           );
                         } else if (controller.errorMessage != null) {
-                          // Otro tipo de error (por ejemplo, conexión)
                           showDialog(
                             context: context,
                             builder: (_) => AlertDialog(

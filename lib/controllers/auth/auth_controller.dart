@@ -1,27 +1,19 @@
-
-
-import 'package:ecuaranch/services/services.dart';
 import 'package:flutter/material.dart';
-
-import '../../settings/settings.dart';
+import 'package:sqflite/sqflite.dart';
+import '../../load_services/auth_service.dart';
 
 class UserController with ChangeNotifier {
-  final OdooService odooService = OdooService();
-  
-  String db = Config.databaseName;
+  final Database db;
+  final AuthService authService;
+
+  UserController(this.db) : authService = AuthService(db);
 
   String username = '';
   String password = '';
 
-  // Estado de la carga
   bool isLoading = false;
-  Map<String, dynamic>? userData;
+  int? userId;
   String? errorMessage;
-
-  void setDb(String value) {
-    db = value;
-    notifyListeners();
-  }
 
   void setUsername(String value) {
     username = value;
@@ -33,18 +25,25 @@ class UserController with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchUserData() async {
+  Future<void> login() async {
     isLoading = true;
+    errorMessage = null;
     notifyListeners();
+
     try {
-      userData = await odooService.getUserFromOdoo(db, username, password);
-      errorMessage = null;
+      // Intentar login online
+      userId = await authService.loginAndSave(username, password);
     } catch (e) {
-      errorMessage = e.toString();
-      userData = null;
-    } finally {
-      isLoading = false;
-      notifyListeners();
+      // Si falla (ej. sin internet), intentar login offline
+      final localUser = await authService.getLocalUser(username);
+      if (localUser != null && localUser['password'] == password) {
+        userId = localUser['id'];
+      } else {
+        errorMessage = "No hay conexión y usuario no encontrado localmente.";
+      }
     }
+
+    isLoading = false;
+    notifyListeners();
   }
 }
