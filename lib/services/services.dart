@@ -17,7 +17,7 @@ import '../model/person.dart';
 import '../settings/settings.dart';
 
 class OdooService {
-  final String url = "https://ecuaranch-backend.duckdns.org";
+  final String url = "https://demo-ecuaranchbackend.duckdns.org";
 
   Future<Map<String, dynamic>> getUserFromOdoo(String db, String username,
       String password) async {
@@ -698,13 +698,14 @@ class OdooService {
   }
 
   static Future<bool> createStable(StableData data) async {
-    final url = Uri.parse(
-        "https://ecuaranch-backend.duckdns.org/create_stable");
+    const url = Config.baseUrl;
+    final url2 = Uri.parse("$url/create_stable");
+
 
     final headers = {"Content-Type": "application/json"};
 
     final response = await http.post(
-      url,
+      url2,
       headers: headers,
       body: jsonEncode(data.toJson()),
     );
@@ -713,9 +714,10 @@ class OdooService {
   }
 
   static Future<List<Person>> fetchPersons() async {
-    final url = Uri.parse('https://ecuaranch-backend.duckdns.org/get_person');
+    const url = Config.baseUrl;
+    final url2 = Uri.parse('$url/get_person');
     final response = await http.post(
-      url,
+      url2,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         "db": Config.databaseName,
@@ -735,9 +737,10 @@ class OdooService {
 
 
   static Future<List<Person>> fetchUsers() async {
-    final url = Uri.parse('https://ecuaranch-backend.duckdns.org/get_users');
+    const url = Config.baseUrl;
+    final url2 = Uri.parse('$url/get_users');
     final response = await http.post(
-      url,
+      url2,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         "db": Config.databaseName,
@@ -756,10 +759,11 @@ class OdooService {
   }
 
   static Future<Map<String, dynamic>> createPerson(Partner partner) async {
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_person");
+    const url = Config.baseUrl;
+    final url2 = Uri.parse("$url/create_person");
 
     final response = await http.post(
-      url,
+      url2,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(partner.toJson()),
     );
@@ -875,7 +879,7 @@ class OdooService {
   }
 
   Future<Map<String, dynamic>> getAnimalsByGenero(String genero) async {
-    final url = 'https://ecuaranch-backend.duckdns.org/get_nro_animals'; // API URL
+    final url2 = "$url/get_nro_animals";
 
     final headers = {
       'Accept': 'application/json',
@@ -893,7 +897,7 @@ class OdooService {
     try {
       // Send the POST request with the URL, headers, and body
       final response = await http.post(
-        Uri.parse('$url?genero=$genero'),  // Add genero as a query parameter
+        Uri.parse('$url2?genero=$genero'),  // Add genero as a query parameter
         headers: headers,
         body: body,
       );

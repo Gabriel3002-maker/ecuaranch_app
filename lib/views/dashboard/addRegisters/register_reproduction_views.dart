@@ -33,6 +33,8 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
   String _confirmationOfPregnancy = "Ecografia";
   String _pregnancyConfirmed = "Si";
 
+  PageController _pageController = PageController();
+
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -52,11 +54,12 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
       "x_studio_nmero_de_cras_esperadas": int.tryParse(_expectedOffspringController.text) ?? 0,
     };
 
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_reproduction_followup_animal_in_odoo");
+    const url = Config.baseUrl;
+    final url2 = Uri.parse("$url/create_reproduction_followup_animal_in_odoo");
 
     try {
       final response = await http.post(
-        url,
+        url2,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
@@ -81,6 +84,7 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
     }
   }
 
+  // This is the correct definition of _pickDate
   Future<void> _pickDate(DateTime initialDate, Function(DateTime) setDate) async {
     final picked = await showDatePicker(
       context: context,
@@ -106,7 +110,7 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Registrar Etapas de Reproduccion',
+          'Etapas de Reproduccion',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -122,152 +126,225 @@ class _RegisterReproductionViewState extends State<RegisterReproductionView> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Form(
-                key: _formKey,
-                child: Column(
+      body: Stack(
+        children: [
+          // Fondo con el logo con opacidad
+          Positioned.fill(
+            child: IgnorePointer(  // Evita que el fondo interfiera con la interacción
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06,  // Opacidad baja
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png',  // Ruta de la imagen
+                    width: 250,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Cuerpo principal con las secciones de formulario
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+            children: [
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
                   children: [
-                    Text("Animal ID: ${widget.animalId}"),
-                    const SizedBox(height: 16),
+                    // Página 1: Fechas
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            // Fecha inicio del celo
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Fecha inicio del celo: ${DateFormat('yyyy-MM-dd').format(_celOStartDate)}",
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => _pickDate(_celOStartDate, (date) => _celOStartDate = date),
+                                  child: const Text("Seleccionar fecha", style: TextStyle(color: themeColor)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
 
-                    // Fecha inicio del celo
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Fecha inicio del celo: ${DateFormat('yyyy-MM-dd').format(_celOStartDate)}",
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () => _pickDate(_celOStartDate, (date) => _celOStartDate = date),
-                          child: const Text(
-                            "Seleccionar fecha",
-                            style: TextStyle(color: themeColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
+                            // Fecha de inseminación
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Fecha inseminacion: ${DateFormat('yyyy-MM-dd').format(_inseminationDate)}",
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => _pickDate(_inseminationDate, (date) => _inseminationDate = date),
+                                  child: const Text("Seleccionar fecha", style: TextStyle(color: themeColor)),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
 
-                    // Fecha de inseminación
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Fecha inseminacion: ${DateFormat('yyyy-MM-dd').format(_inseminationDate)}",
-                          ),
+                            // Botón para ir a la siguiente sección
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: themeColor),
+                                onPressed: () {
+                                  _pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.ease,
+                                  );
+                                },
+                                child: const Text("Siguiente"),
+                              ),
+                            ),
+                          ],
                         ),
-                        TextButton(
-                          onPressed: () => _pickDate(_inseminationDate, (date) => _inseminationDate = date),
-                          child: const Text(
-                            "Seleccionar fecha",
-                            style: TextStyle(color: themeColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    DropdownButtonFormField<String>(
-                      value: _methodOfReproduction,
-                      items: const [
-                        DropdownMenuItem(child: Text("Inseminacion"), value: "Inseminacion"),
-                        DropdownMenuItem(child: Text("Cubricion Natural"), value: "Cubricion Natural"),
-                      ],
-                      onChanged: (value) => setState(() => _methodOfReproduction = value!),
-                      decoration: const InputDecoration(
-                        labelText: "Metodo de reproduccion",
-                        border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    // Página 2: Métodos y confirmación
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            // Método de reproducción
+                            DropdownButtonFormField<String>(
+                              value: _methodOfReproduction,
+                              items: const [
+                                DropdownMenuItem(child: Text("Inseminacion"), value: "Inseminacion"),
+                                DropdownMenuItem(child: Text("Cubricion Natural"), value: "Natural"),
+                              ],
+                              onChanged: (value) => setState(() => _methodOfReproduction = value!),
+                              decoration: const InputDecoration(
+                                labelText: "Metodo de reproduccion",
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
 
-                    DropdownButtonFormField<String>(
-                      value: _confirmationOfPregnancy,
-                      items: const [
-                        DropdownMenuItem(child: Text("Ecografia"), value: "Ecografia"),
-                        DropdownMenuItem(child: Text("Examen Veterinario"), value: "Examen Veterinario"),
-                      ],
-                      onChanged: (value) => setState(() => _confirmationOfPregnancy = value!),
-                      decoration: const InputDecoration(
-                        labelText: "Confirmacion de embarazo",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                            // Confirmación de embarazo
+                            DropdownButtonFormField<String>(
+                              value: _confirmationOfPregnancy,
+                              items: const [
+                                DropdownMenuItem(child: Text("Ecografia"), value: "Ecografia"),
+                                DropdownMenuItem(child: Text("Examen Veterinario"), value: "Examen veterinario"),
+                              ],
+                              onChanged: (value) => setState(() => _confirmationOfPregnancy = value!),
+                              decoration: const InputDecoration(
+                                labelText: "Confirmacion de embarazo",
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
 
-                    DropdownButtonFormField<String>(
-                      value: _pregnancyConfirmed,
-                      items: const [
-                        DropdownMenuItem(child: Text("Si"), value: "Si"),
-                        DropdownMenuItem(child: Text("No"), value: "No"),
-                      ],
-                      onChanged: (value) => setState(() => _pregnancyConfirmed = value!),
-                      decoration: const InputDecoration(
-                        labelText: "Embarazo confirmado",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                            // Embarazo confirmado
+                            DropdownButtonFormField<String>(
+                              value: _pregnancyConfirmed,
+                              items: const [
+                                DropdownMenuItem(child: Text("Si"), value: "Si"),
+                                DropdownMenuItem(child: Text("No"), value: "No"),
+                              ],
+                              onChanged: (value) => setState(() => _pregnancyConfirmed = value!),
+                              decoration: const InputDecoration(
+                                labelText: "Embarazo confirmado",
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const Spacer(),
 
-                    TextFormField(
-                      controller: _expectedOffspringController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: "Numero de crias esperadas",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Campo requerido";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Debe ser un numero";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _durationController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: "Duracion del celo (en dias)",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Campo requerido";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Debe ser un numero";
-                        }
-                        return null;
-                      },
-                    ),
-                    const Spacer(),
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: themeColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                            // Botón para ir a la siguiente sección
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: themeColor),
+                                onPressed: () {
+                                  _pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.ease,
+                                  );
+                                },
+                                child: const Text("Siguiente"),
+                              ),
+                            ),
+                          ],
                         ),
-                        onPressed: _submitForm,
-                        child: const Text(
-                          "Registrar",
-                          style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    // Página 3: Número de crías y duración
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            // Número de crías esperadas
+                            TextFormField(
+                              controller: _expectedOffspringController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                labelText: "Número de crías esperadas",
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Campo requerido";
+                                }
+                                if (int.tryParse(value) == null) {
+                                  return "Debe ser un número";
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Duración del celo
+                            TextFormField(
+                              controller: _durationController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                labelText: "Duración del celo (en días)",
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Campo requerido";
+                                }
+                                if (int.tryParse(value) == null) {
+                                  return "Debe ser un número";
+                                }
+                                return null;
+                              },
+                            ),
+                            const Spacer(),
+
+                            // Botón para registrar la reproducción
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: themeColor),
+                                onPressed: _submitForm,
+                                child: const Text("Registrar Reproducción"),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
+            ],
+          ),
+        ],
       ),
     );
   }

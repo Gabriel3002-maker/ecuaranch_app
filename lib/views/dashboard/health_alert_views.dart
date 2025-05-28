@@ -18,7 +18,9 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
   @override
   void initState() {
     super.initState();
-    _loadAlerts();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadAlerts(); // Cargar las alertas después de que el widget haya terminado de construirse
+    });
   }
 
   Future<void> _loadAlerts() async {
@@ -152,7 +154,9 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
                     itemBuilder: (context, index) {
                       final alert = controller.health[index];
                       final alertName = alert['x_name'] ?? 'Sin nombre';
-                      final animalData = alert['x_studio_animal'] as List<dynamic>? ?? [];
+                      final animalData = (alert['x_studio_animal'] is List<dynamic>)
+                          ? alert['x_studio_animal'] as List<dynamic>
+                          : [];
                       final animalName = animalData.length > 1 ? animalData[1] : 'Animal desconocido';
                       final alertDate = alert['x_studio_fecha'] ?? 'Fecha no disponible';
                       final alertId = alert['id'];
@@ -209,8 +213,8 @@ class _HealthAlertViewsState extends State<HealthAlertViews> {
                                             MaterialPageRoute(
                                               builder: (context) => AnimalDetailByIdView(
                                                 animalId: animalId,
-                                                db:  Config.databaseName,
-                                                userId:  Config.userId,
+                                                db: Config.databaseName,
+                                                userId: Config.userId,
                                                 password: Config.password,
                                               ),
                                             ),

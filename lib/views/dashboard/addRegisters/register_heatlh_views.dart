@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../../settings/settings.dart';
+
 class RegisterHealthView extends StatefulWidget {
   final int animalId;
 
@@ -22,9 +24,9 @@ class _RegisterHealthViewState extends State<RegisterHealthView> {
   bool _isLoading = false;
 
   // Datos fijos
-  final String db = "ecuaRanch";
-  final int userId = 2;
-  final String password = "gabriel@nextgensolutions.group";
+  final String db = Config.databaseName;
+  final int userId = Config.userId;
+  final String password = Config.password;
 
   final List<String> estadosSalud = ["Bueno", "Regular", "Grave"];
 
@@ -43,11 +45,12 @@ class _RegisterHealthViewState extends State<RegisterHealthView> {
       "x_studio_estado_de_salud": _estadoSeleccionado,
     };
 
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/health_monitoring_animal_in_odoo"); 
+    const url = Config.baseUrl;
+    final url2 = Uri.parse("$url/health_monitoring_animal_in_odoo");
 
     try {
       final response = await http.post(
-        url,
+        url2,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
@@ -115,85 +118,102 @@ class _RegisterHealthViewState extends State<RegisterHealthView> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Text("Animal ID: ${widget.animalId}"),
-                    const SizedBox(height: 16),
-
-                    // Descripción del problema
-                    TextFormField(
-                      controller: _descripcionController,
-                      decoration: const InputDecoration(
-                        labelText: "Descripción del problema",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Requerido" : null,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Estado de salud (Dropdown)
-                    DropdownButtonFormField<String>(
-                      value: _estadoSeleccionado,
-                      items: estadosSalud
-                          .map((estado) => DropdownMenuItem(
-                                value: estado,
-                                child: Text(estado),
-                              ))
-                          .toList(),
-                      onChanged: (value) =>
-                          setState(() => _estadoSeleccionado = value!),
-                      decoration: const InputDecoration(
-                        labelText: "Estado de salud",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Fecha
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _pickDate,
-                          child: const Text(
-                            "Seleccionar fecha",
-                            style: TextStyle(color: themeColor),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const Spacer(),
-
-                    // Botón
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: themeColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        onPressed: _submitForm,
-                        child: const Text(
-                          "Registrar",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
+      body: Stack(
+        children: [
+          // Fondo con la imagen con opacidad
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06, // Opacidad de la imagen
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png',
+                    width: 250,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
+            ),
+          ),
+          // Contenido principal
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  //Text("Animal ID: ${widget.animalId}"),
+                  //const SizedBox(height: 16),
+
+                  // Fecha
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _pickDate,
+                        child: const Text(
+                          "Seleccionar fecha",
+                          style: TextStyle(color: themeColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  DropdownButtonFormField<String>(
+                    value: _estadoSeleccionado,
+                    items: estadosSalud
+                        .map((estado) => DropdownMenuItem(
+                      value: estado,
+                      child: Text(estado),
+                    ))
+                        .toList(),
+                    onChanged: (value) =>
+                        setState(() => _estadoSeleccionado = value!),
+                    decoration: const InputDecoration(
+                      labelText: "Estado de salud",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  TextFormField(
+                    controller: _descripcionController,
+                    decoration: const InputDecoration(
+                      labelText: "Descripción del problema",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value == null || value.isEmpty ? "Requerido" : null,
+                  ),
+                  const Spacer(),
+
+                  // Botón
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeColor,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: _submitForm,
+                      child: const Text(
+                        "Registrar",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

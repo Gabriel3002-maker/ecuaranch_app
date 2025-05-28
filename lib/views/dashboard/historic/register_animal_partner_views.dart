@@ -171,27 +171,27 @@ class RegisterAnimalPartnerViewsState extends State<RegisterAnimalPartnerViews> 
                 children: [
                   TextFormField(
                     controller: _nameController,
-                    decoration: _customInputDecoration('Nombre'),
+                    decoration: _customInputDecoration('CODIGO - RAZA '),
                     validator: (value) => value == null || value.isEmpty ? 'Por favor ingrese el nombre' : null,
                   ),
                   const SizedBox(height: 16),
 
                   TextFormField(
                     controller: _emailController,
-                    decoration: _customInputDecoration('Email'),
+                    decoration: _customInputDecoration('Email de Persona Encargada '),
                     validator: (value) => value == null || value.isEmpty ? 'Por favor ingrese el email' : null,
                   ),
                   const SizedBox(height: 16),
 
                   TextFormField(
                     controller: _phoneController,
-                    decoration: _customInputDecoration('Teléfono'),
+                    decoration: _customInputDecoration('Teléfono de Persona Encargada'),
                   ),
                   const SizedBox(height: 16),
 
                   TextFormField(
                     controller: _mobileController,
-                    decoration: _customInputDecoration('Móvil'),
+                    decoration: _customInputDecoration('Móvil de Persona Encargada'),
                   ),
                   const SizedBox(height: 16),
 

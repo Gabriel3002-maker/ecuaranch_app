@@ -85,7 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Container(
                   decoration: BoxDecoration(
                     image: const DecorationImage(
-                      image: AssetImage('assets/icons/backgroud_home.jpg'),
+                      image: AssetImage('assets/icons/fondo.png'),
                       fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(Colors.black26, BlendMode.darken),
                     ),

@@ -159,7 +159,9 @@ class _WeightAlertViewsState extends State<WeightAlertViews> {
                       final alert = controller.weight[index];
                       final alertId = alert['id'];
                       final alertName = alert['x_name'] ?? 'Sin nombre';
-                      final animalData = alert['x_studio_animal'] as List<dynamic>? ?? [];
+                      final animalData = alert['x_studio_animal'] is List<dynamic>
+                          ? alert['x_studio_animal'] as List<dynamic>
+                          : [];
                       final animalName = animalData.length > 1 ? animalData[1] : 'Animal desconocido';
                       final alertDate = alert['x_studio_fecha'] ?? 'Fecha no disponible';
                       final diffWeight = alert['x_studio_diferencia_de_peso']?.toString() ?? '0';

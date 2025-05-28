@@ -250,7 +250,7 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
                   ),
                   items: const [
                     DropdownMenuItem(value: 'Leche', child: Text('Leche')),
-                    DropdownMenuItem(value: 'Pasto', child: Text('Pasto')),
+                    DropdownMenuItem(value: 'Pasto ', child: Text('Pasto')),
                     DropdownMenuItem(value: 'Balanceado', child: Text('Balanceado')),
                   ],
                   onChanged: (value) {
@@ -305,7 +305,7 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
                 TextField(
                   controller: _xStudioCharField18c1io38ib86Controller,
                   decoration: const InputDecoration(
-                    labelText: 'Código de Identificación',
+                    labelText: 'Raza',
                     prefixIcon: Icon(Icons.code),
                   ),
                 ),
@@ -316,7 +316,7 @@ class _AnimalRegistrationScreenState extends State<AnimalRegistrationScreen> {
                     prefixIcon: Icon(Icons.assignment),
                   ),
                   items: const [
-                    DropdownMenuItem(value: 'Leche', child: Text('Leche')),
+                    DropdownMenuItem(value: 'Productor de Leche', child: Text('Leche')),
                     DropdownMenuItem(value: 'Carne', child: Text('Carne')),
                     DropdownMenuItem(value: 'Semental', child: Text('Semental')),
                     DropdownMenuItem(value: 'Reproductora', child: Text('Reproductora')),

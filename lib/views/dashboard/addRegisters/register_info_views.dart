@@ -22,54 +22,51 @@ class RegisterInfoView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white, // Fondo general blanco
       appBar: AppBar(
-        backgroundColor: Colors.white, // Fondo AppBar
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // Ícono blanco
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         title: const Text(
-          'Registrar Novedades',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white, // Texto blanco
-          ),
+          'Registro',
+          style: TextStyle(color: Colors.black), // Texto en blanco para mejor contraste
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white), // Ícono blanco
-            onPressed: () {
-              // Acción notificaciones
-            },
+        iconTheme: const IconThemeData(color: Colors.black), // Para que los íconos también sean blancos
+      ),
+      body: Stack(
+        children: [
+          // Fondo con la imagen con opacidad
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06, // Opacidad de la imagen
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png',
+                    width: 250,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Contenido principal
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                _buildButton(context, "Registrar Observaciones", RegisterObservationView(animalId: animalId), Icons.note_add),
+                _buildButton(context, "Registrar Salud", RegisterHealthView(animalId: animalId), Icons.health_and_safety),
+                _buildButton(context, "Registrar Crecimiento y Peso", RegisterGrowthView(animalId: animalId), Icons.accessibility),
+                _buildButton(context, "Registrar Reproducción", RegisterReproductionView(animalId: animalId), Icons.favorite),
+                _buildButton(context, "Registrar Alimentación", RegisterFeedingView(animalId: animalId), Icons.fastfood),
+                _buildButton(context, "Registrar Producción", RegisterProductionView(animalId: animalId), Icons.production_quantity_limits),
+              ],
+            ),
           ),
         ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Animal ID: $animalId",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 24),
-            _buildButton(context, "Registrar Observaciones", RegisterObservationView(animalId: animalId)),
-            _buildButton(context, "Registrar Salud", RegisterHealthView(animalId: animalId)),
-            _buildButton(context, "Registrar Crecimiento y Peso", RegisterGrowthView(animalId: animalId)),
-            _buildButton(context, "Registrar Reproducción", RegisterReproductionView(animalId: animalId)),
-            _buildButton(context, "Registrar Alimentación", RegisterFeedingView(animalId: animalId)),
-            _buildButton(context, "Registrar Producción", RegisterProductionView(animalId: animalId)),
-          ],
-        ),
       ),
     );
   }
 
-  Widget _buildButton(BuildContext context, String title, Widget page) {
+  Widget _buildButton(BuildContext context, String title, Widget page, IconData icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: SizedBox(
@@ -82,11 +79,17 @@ class RegisterInfoView extends StatelessWidget {
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => page));
           },
-          child: Text(
-  title,
-  style: const TextStyle(color: Colors.white), // Texto blanco
-),
-
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 24), // El ícono al principio
+              const SizedBox(width: 8), // Espacio entre el ícono y el texto
+              Text(
+                title,
+                style: const TextStyle(color: Colors.white), // Texto blanco
+              ),
+            ],
+          ),
         ),
       ),
     );

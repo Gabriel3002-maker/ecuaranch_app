@@ -24,86 +24,106 @@ class _LeadsViewsState extends State<LeadsViews> {
         title: const Text('Oportunidades'),
         centerTitle: true,
       ),
-      body: Consumer<GetLeadsController>(
-        builder: (context, controller, child) {
-          if (controller.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (controller.errorMessage.isNotEmpty) {
-            return Center(child: Text('Error: ${controller.errorMessage}'));
-          } else if (controller.leads.isEmpty) {
-            return const Center(child: Text('No hay oportunidades disponibles.'));
-          }
-
-          return ListView.builder(
-            itemCount: controller.leads.length,
-            itemBuilder: (context, index) {
-              final lead = controller.leads[index];
-
-              final name = lead['name'] ?? 'Sin nombre';
-              final email = lead['email_from'] ?? 'Sin correo';
-              final phone = lead['phone'] ?? 'Sin teléfono';
-              final mobile = lead['mobile'] ?? 'Sin móvil';
-              final stage = lead['stage_id'] != null && lead['stage_id'].length > 1
-                  ? lead['stage_id'][1]
-                  : 'Etapa desconocida';
-
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(Icons.mail, size: 16, color: Colors.grey),
-                          const SizedBox(width: 6),
-                          Expanded(child: Text(email)),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          const Icon(Icons.phone, size: 16, color: Colors.grey),
-                          const SizedBox(width: 6),
-                          Text(phone),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          const Icon(Icons.smartphone, size: 16, color: Colors.grey),
-                          const SizedBox(width: 6),
-                          Text(mobile),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          const Icon(Icons.flag, size: 16, color: Colors.grey),
-                          const SizedBox(width: 6),
-                          Text('Etapa: $stage'),
-                        ],
-                      ),
-                    ],
+      body: Stack(
+        children: [
+          // Fondo con el logo con opacidad
+          Positioned.fill(
+            child: IgnorePointer(  // Evita que el fondo interfiera con la interacción
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06,  // Opacidad baja
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png',  // Ruta de la imagen
+                    width: 250,
+                    fit: BoxFit.contain,
                   ),
                 ),
+              ),
+            ),
+          ),
+          // Cuerpo principal con el Consumer
+          Consumer<GetLeadsController>(
+            builder: (context, controller, child) {
+              if (controller.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (controller.errorMessage.isNotEmpty) {
+                return Center(child: Text('Error: ${controller.errorMessage}'));
+              } else if (controller.leads.isEmpty) {
+                return const Center(child: Text('No hay oportunidades disponibles.'));
+              }
+
+              return ListView.builder(
+                itemCount: controller.leads.length,
+                itemBuilder: (context, index) {
+                  final lead = controller.leads[index];
+
+                  final name = lead['name'] ?? 'Sin nombre';
+                  final email = lead['email_from'] ?? 'Sin correo';
+                  final phone = lead['phone'] ?? 'Sin teléfono';
+                  final mobile = lead['mobile'] ?? 'Sin móvil';
+                  final stage = lead['stage_id'] != null && lead['stage_id'].length > 1
+                      ? lead['stage_id'][1]
+                      : 'Etapa desconocida';
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.mail, size: 16, color: Colors.grey),
+                              const SizedBox(width: 6),
+                              Expanded(child: Text(email)),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              const Icon(Icons.phone, size: 16, color: Colors.grey),
+                              const SizedBox(width: 6),
+                              Text(phone),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              const Icon(Icons.smartphone, size: 16, color: Colors.grey),
+                              const SizedBox(width: 6),
+                              Text(mobile),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              const Icon(Icons.flag, size: 16, color: Colors.grey),
+                              const SizedBox(width: 6),
+                              Text('Etapa: $stage'),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             },
-          );
-        },
+          ),
+        ],
       ),
     );
   }

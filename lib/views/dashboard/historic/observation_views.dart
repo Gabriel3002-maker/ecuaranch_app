@@ -18,7 +18,6 @@ class AnimalHistoryObservationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ChangeNotifierProvider(
       create: (_) => AnimalHistoryObservationController()
         ..fetchAnimalHistory(
@@ -55,62 +54,81 @@ class AnimalHistoryObservationView extends StatelessWidget {
             ),
           ],
         ),
-        body: Consumer<AnimalHistoryObservationController>(
-          builder: (context, controller, _) {
-            if (controller.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (controller.errorMessage.isNotEmpty) {
-              return Center(
-                child: Text(
-                  controller.errorMessage,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              );
-            }
-
-            if (controller.animalHistoryObservation.isEmpty) {
-              return const Center(
-                child: Text('No hay observaciones registradas.'),
-              );
-            }
-
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: controller.animalHistoryObservation.length,
-              itemBuilder: (context, index) {
-                final item = controller.animalHistoryObservation[index];
-
-                final String date = item['x_studio_fecha_1'] ?? 'Sin fecha';
-                final String description = item['x_name'] ?? 'Sin descripción';
-
-                return Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  color: const Color(0xFFF4F4F4), // Aplicar color F4F4F4 a la tarjeta
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('📅 Fecha: $date',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            )),
-                        const SizedBox(height: 8),
-                        _buildRow("📝 Observación", description),
-                      ],
+        body: Stack(
+          children: [
+            // Fondo con el logo
+            Positioned.fill(
+              child: IgnorePointer( // Evita que el fondo interfiera con la interacción
+                child: Center(
+                  child: Opacity(
+                    opacity: 0.06, // Opacidad baja
+                    child: Image.asset(
+                      'assets/images/logoecuaranch.png',
+                      width: 250,
+                      fit: BoxFit.contain,
                     ),
                   ),
+                ),
+              ),
+            ),
+            Consumer<AnimalHistoryObservationController>(
+              builder: (context, controller, _) {
+                if (controller.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (controller.errorMessage.isNotEmpty) {
+                  return Center(
+                    child: Text(
+                      controller.errorMessage,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                if (controller.animalHistoryObservation.isEmpty) {
+                  return const Center(
+                    child: Text('No hay observaciones registradas.'),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: controller.animalHistoryObservation.length,
+                  itemBuilder: (context, index) {
+                    final item = controller.animalHistoryObservation[index];
+
+                    final String date = item['x_studio_fecha_1'] ?? 'Sin fecha';
+                    final String description = item['x_name'] ?? 'Sin descripción';
+
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      color: const Color(0xFFF4F4F4), // Aplicar color F4F4F4 a la tarjeta
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('📅 Fecha: $date',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                )),
+                            const SizedBox(height: 8),
+                            _buildRow("📝 Observación", description),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
-            );
-          },
+            ),
+          ],
         ),
       ),
     );

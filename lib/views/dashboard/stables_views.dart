@@ -60,97 +60,114 @@ class _StablesViewState extends State<StablesView> {
             ),
           ],
         ),
-        body: Consumer<StablesController>(
-          builder: (context, controller, child) {
-            if (controller.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (controller.errorMessage.isNotEmpty) {
-              return Center(child: Text(controller.errorMessage));
-            }
-
-            if (controller.stables.isEmpty) {
-              return const Center(
-                child: Text(
-                  "No se encontraron establos.",
-                  style: TextStyle(fontSize: 18),
-                ),
-              );
-            }
-
-            return RefreshIndicator(
-              onRefresh: _loadStables,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(12),
-                itemCount: controller.stables.length,
-                itemBuilder: (context, index) {
-                  final stable = controller.stables[index];
-                  final name = stable.name ?? 'Sin nombre';
-
-
-                  return Card(
-                    elevation: 8, // Mayor elevación para dar más profundidad
-                    margin: const EdgeInsets.symmetric(vertical: 12), // Más espacio vertical
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16), // Bordes más redondeados
+        body: Stack(  // Usamos Stack para poner el logo como fondo con opacidad
+          children: [
+            Positioned.fill(
+              child: IgnorePointer(  // Evita que el logo interfiera con la interacción
+                child: Center(
+                  child: Opacity(
+                    opacity: 0.06,  // Opacidad baja
+                    child: Image.asset(
+                      'assets/images/logoecuaranch.png',
+                      width: 250,
+                      fit: BoxFit.contain,
                     ),
-                    color: cardBackgroundColor, // Color de fondo del card
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0), // Más espacio dentro del card
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: buttonColor, // Fondo del botón verde oscuro
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Mejor tamaño del botón
-                              ),
-                              onPressed: () {
-                                final stableId = stable.id ?? 0;
+                  ),
+                ),
+              ),
+            ),
+            Consumer<StablesController>(
+              builder: (context, controller, child) {
+                if (controller.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => AnimalsByStableView(
-                                      stableId: stableId,
-                                      db: 'ecuaRanch', // reemplaza según tu flujo
-                                      userId: 2, // puedes obtenerlo de AuthProvider
-                                      password: 'gabriel@nextgensolutions.group',
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                "Ver animales asignados",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white, // Texto del botón en blanco
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                if (controller.errorMessage.isNotEmpty) {
+                  return Center(child: Text(controller.errorMessage));
+                }
+
+                if (controller.stables.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No se encontraron establos.",
+                      style: TextStyle(fontSize: 18),
                     ),
                   );
-                },
-              ),
-            );
-          },
+                }
+
+                return RefreshIndicator(
+                  onRefresh: _loadStables,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: controller.stables.length,
+                    itemBuilder: (context, index) {
+                      final stable = controller.stables[index];
+                      final name = stable.name ?? 'Sin nombre';
+
+                      return Card(
+                        elevation: 8, // Mayor elevación para dar más profundidad
+                        margin: const EdgeInsets.symmetric(vertical: 12), // Más espacio vertical
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16), // Bordes más redondeados
+                        ),
+                        color: cardBackgroundColor, // Color de fondo del card
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0), // Más espacio dentro del card
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                title: Text(
+                                  name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: buttonColor, // Fondo del botón verde oscuro
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Mejor tamaño del botón
+                                  ),
+                                  onPressed: () {
+                                    final stableId = stable.id ?? 0;
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => AnimalsByStableView(
+                                          stableId: stableId,
+                                          db: 'ecuaRanch', // reemplaza según tu flujo
+                                          userId: 2, // puedes obtenerlo de AuthProvider
+                                          password: 'gabriel@nextgensolutions.group',
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Ver animales asignados",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white, // Texto del botón en blanco
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {

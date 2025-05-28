@@ -92,19 +92,10 @@ class AnimalsByStableView extends StatelessWidget {
                   final String gender = animal['x_studio_genero_1'] ?? 'Sin género';
                   final String use = animal['x_studio_destinado_a'] ?? 'Sin uso';
                   final String createDate = animal['create_date'] ?? 'Fecha no disponible';
-                  final String? imageBase64 = animal['x_studio_image'];
                   final num value = animal['x_studio_value'] ?? 0;
                   final int animalId = animal['id'] ?? 0;
 
-                  ImageProvider? image;
-                  if (imageBase64 != null && imageBase64.isNotEmpty) {
-                    try {
-                      final Uint8List imageBytes = base64Decode(imageBase64);
-                      image = MemoryImage(imageBytes);
-                    } catch (e) {
-                      image = null;
-                    }
-                  }
+
 
                   return Card(
                     color: cardBackgroundColor, // Fondo de los cards en gris claro
@@ -125,14 +116,9 @@ class AnimalsByStableView extends StatelessWidget {
                               children: [
                                 Row(
                                   children: [
-                                    image != null
-                                        ? CircleAvatar(
-                                            backgroundImage: image,
+                                    CircleAvatar(
                                             backgroundColor: themeColor.withOpacity(0.2),
-                                          )
-                                        : CircleAvatar(
-                                            backgroundColor: themeColor.withOpacity(0.2),
-                                            child: const Icon(Icons.image, color: Colors.white),
+                                            child: const Icon(Icons.image_aspect_ratio, color: Colors.white),
                                           ),
                                     const SizedBox(width: 8),
                                     Expanded(

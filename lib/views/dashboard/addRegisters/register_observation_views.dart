@@ -1,3 +1,4 @@
+import 'package:ecuaranch/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -15,16 +16,16 @@ class RegisterObservationView extends StatefulWidget {
 const Color themeColor = Color(0xFF0A5A57);
 
 class _RegisterObservationViewState extends State<RegisterObservationView> {
-  
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _observacionController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   bool _isLoading = false;
 
   // Datos fijos
-  final String db = "ecuaRanch";
-  final int userId = 2;
-  final String password = "gabriel@nextgensolutions.group";
+  final String db = Config.databaseName;
+  final int userId = Config.userId;
+  final String password = Config.password;
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
@@ -40,11 +41,12 @@ class _RegisterObservationViewState extends State<RegisterObservationView> {
       "x_name": _observacionController.text,
     };
 
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_observation_in_animal_odoo"); 
+    const url = Config.baseUrl;
+    final url2 = Uri.parse("$url/create_observation_in_animal_odoo");
 
     try {
       final response = await http.post(
-        url,
+        url2,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
@@ -87,87 +89,109 @@ class _RegisterObservationViewState extends State<RegisterObservationView> {
     return Scaffold(
       backgroundColor: Colors.white, // Fondo blanco
       appBar: AppBar(
-          backgroundColor: Colors.white, // Fondo blanco en el AppBar
-          automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+        backgroundColor: Colors.white, // Fondo blanco en el AppBar
+        automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+          onPressed: () {
+            Navigator.pop(context); // Botón de retroceso
+          },
+        ),
+        title: const Text(
+          'Registrar Observaciones',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold, // Texto en negrita
+            color: Colors.black, // Texto en color negro
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
             onPressed: () {
-              Navigator.pop(context); // Botón de retroceso
+              // Acción de notificaciones
             },
           ),
-          title: const Text(
-            'Registrar Observaciones',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold, // Texto en negrita
-              color: Colors.black, // Texto en color negro
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
-              onPressed: () {
-                // Acción de notificaciones
-              },
-            ),
-          ],
-        ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Text("Animal ID: ${widget.animalId}"),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _observacionController,
-                      maxLines: 4,
-                      decoration: const InputDecoration(
-                        labelText: "Observación",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Campo requerido" : null,
-                    ),
-                    const SizedBox(height: 16),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _pickDate,
-                          child: const Text("Seleccionar fecha",
-                          style: TextStyle(color: themeColor),),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style:ElevatedButton.styleFrom(
-                          backgroundColor: themeColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-
-                        ),
-                        onPressed: _submitForm,
-                        child: const Text("Registrar",
-                        style:  TextStyle(color: Colors.white
-                        ),
-                        ) ,
-                      ),
-                    ),
-                  ],
+        ],
+      ),
+      body: Stack(
+        children: [
+          // Fondo con la imagen con opacidad
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06, // Opacidad de la imagen
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png',
+                    width: 250,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
+            ),
+          ),
+          // Contenido principal
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  //Text("Animal ID: ${widget.animalId}"),
+                  //const SizedBox(height: 16),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _pickDate,
+                        child: const Text(
+                          "Seleccionar fecha",
+                          style: TextStyle(color: themeColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  TextFormField(
+                    controller: _observacionController,
+                    maxLines: 4,
+                    decoration: const InputDecoration(
+                      labelText: "Observación",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value == null || value.isEmpty ? "Campo requerido" : null,
+                  ),
+                  const Spacer(),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeColor,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: _submitForm,
+                      child: const Text(
+                        "Registrar",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../../settings/settings.dart';
+
 class RegisterGrowthView extends StatefulWidget {
   final int animalId;
 
@@ -22,9 +24,9 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
   bool _isLoading = false;
 
   // Fijos
-  final String db = "ecuaRanch";
-  final int userId = 2;
-  final String password = "gabriel@nextgensolutions.group";
+  final String db = Config.databaseName;
+  final int userId = Config.userId;
+  final String password = Config.password;
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
@@ -41,11 +43,12 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
       "x_name": _pesoController.text,
     };
 
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_growthweight_animal_in_odoo");
+    const url = Config.baseUrl;
+    final url2 = Uri.parse("$url/create_growthweight_animal_in_odoo");
 
     try {
       final response = await http.post(
-        url,
+        url2,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
@@ -95,7 +98,7 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Registrar Crecimiento y Peso',
+          'Crecimiento y Peso',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -111,80 +114,100 @@ class _RegisterGrowthViewState extends State<RegisterGrowthView> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Text("Animal ID: ${widget.animalId}"),
-                    const SizedBox(height: 16),
-
-                    // Campo de Peso
-                    TextFormField(
-                      controller: _pesoController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: "Peso (kg)",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Requerido" : null,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Campo de Altura
-                    TextFormField(
-                      controller: _alturaController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: "Altura (cm)",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Requerido" : null,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Selección de Fecha
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _pickDate,
-                          child: const Text(
-                            "Seleccionar fecha",
-                            style: TextStyle(color: themeColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-
-                    // Botón de Registro
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: themeColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        onPressed: _submitForm,
-                        child: const Text(
-                          "Registrar",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
+      body: Stack(
+        children: [
+          // Fondo con la imagen con opacidad
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06, // Opacidad de la imagen
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png', // Cambia esta ruta si es necesario
+                    width: 250,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
+            ),
+          ),
+          // Contenido principal del formulario
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  //Text("Animal ID: ${widget.animalId}"),
+                  //const SizedBox(height: 16),
+                  // Selección de Fecha
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _pickDate,
+                        child: const Text(
+                          "Seleccionar fecha",
+                          style: TextStyle(color: themeColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Campo de Peso
+                  TextFormField(
+                    controller: _pesoController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Peso (kg)",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value == null || value.isEmpty ? "Requerido" : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Campo de Altura
+                  TextFormField(
+                    controller: _alturaController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Altura (cm)",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value == null || value.isEmpty ? "Requerido" : null,
+                  ),
+                  const SizedBox(height: 16),
+                  const Spacer(),
+
+                  // Botón de Registro
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeColor,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: _submitForm,
+                      child: const Text(
+                        "Registrar",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

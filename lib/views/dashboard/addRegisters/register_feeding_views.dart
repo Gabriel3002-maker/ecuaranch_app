@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../../settings/settings.dart';
+
 class RegisterFeedingView extends StatefulWidget {
   final int animalId;
 
@@ -20,9 +22,9 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
   DateTime _selectedDate = DateTime.now();
   bool _isLoading = false;
 
-  final String db = "ecuaRanch";
-  final int userId = 2;
-  final String password = "gabriel@nextgensolutions.group";
+  final String db = Config.databaseName;
+  final int userId = Config.userId;
+  final String password = Config.password;
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
@@ -38,11 +40,11 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
       "x_name": _alimentoController.text,
     };
 
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_feeding_animal_line");
-
+    const url = Config.baseUrl;
+    final url2 = Uri.parse("$url/create_feeding_animal_line");
     try {
       final response = await http.post(
-        url,
+        url2,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
@@ -92,7 +94,7 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Registrar Alimentacion',
+          'Registrar Alimentación',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -108,66 +110,86 @@ class _RegisterFeedingViewState extends State<RegisterFeedingView> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Text("Animal ID: ${widget.animalId}"),
-                    const SizedBox(height: 16),
-
-                    // Campo de texto
-                    TextFormField(
-                      controller: _alimentoController,
-                      decoration: const InputDecoration(
-                        labelText: "Nombre del alimento",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Requerido" : null,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Fecha
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _pickDate,
-                          child: const Text(
-                            "Seleccionar fecha",
-                            style: TextStyle(color: themeColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-
-                    // Botón registrar
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: themeColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        onPressed: _submitForm,
-                        child: const Text(
-                          "Registrar",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
+      body: Stack(
+        children: [
+          // Fondo con el logo con opacidad
+          Positioned.fill(
+            child: IgnorePointer(  // Evita que el fondo interfiera con la interacción
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06,  // Opacidad baja
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png',  // Ruta de la imagen
+                    width: 250,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
+            ),
+          ),
+          // Cuerpo principal con el formulario
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  //Text("Animal ID: ${widget.animalId}"),
+                  //const SizedBox(height: 16),
+                  // Fecha
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _pickDate,
+                        child: const Text(
+                          "Seleccionar fecha",
+                          style: TextStyle(color: themeColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+
+                  // Campo de texto
+                  TextFormField(
+                    controller: _alimentoController,
+                    decoration: const InputDecoration(
+                      labelText: "Nombre del alimento",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value == null || value.isEmpty ? "Requerido" : null,
+                  ),
+                  const Spacer(),
+
+                  // Botón registrar
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeColor,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: _submitForm,
+                      child: const Text(
+                        "Registrar",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

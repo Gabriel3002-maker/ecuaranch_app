@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../../settings/settings.dart';
+
 const Color themeColor = Color(0xFF0A5A57);
 
 class RegisterProductionView extends StatefulWidget {
@@ -22,9 +24,9 @@ class _RegisterProductionViewState extends State<RegisterProductionView> {
   bool _isLoading = false;
 
   // Datos fijos
-  final String db = "ecuaRanch";
-  final int userId = 2;
-  final String password = "gabriel@nextgensolutions.group";
+  final String db = Config.databaseName;
+  final int userId = Config.userId;
+  final String password = Config.password;
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
@@ -41,11 +43,12 @@ class _RegisterProductionViewState extends State<RegisterProductionView> {
       "x_name": _comentarioController.text,
     };
 
-    final url = Uri.parse("https://ecuaranch-backend.duckdns.org/create_production"); 
+    const url = Config.baseUrl;
+    final url2 = Uri.parse("$url/create_production");
 
     try {
       final response = await http.post(
-        url,
+        url2,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
@@ -88,110 +91,132 @@ class _RegisterProductionViewState extends State<RegisterProductionView> {
     return Scaffold(
       backgroundColor: Colors.white, // Fondo blanco
       appBar: AppBar(
-          backgroundColor: Colors.white, // Fondo blanco en el AppBar
-          automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+        backgroundColor: Colors.white, // Fondo blanco en el AppBar
+        automaticallyImplyLeading: false, // Desactivar el botón de retroceso automático
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black), // Ícono de retroceso negro
+          onPressed: () {
+            Navigator.pop(context); // Botón de retroceso
+          },
+        ),
+        title: const Text(
+          'Registrar Producción',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold, // Texto en negrita
+            color: Colors.black, // Texto en color negro
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
             onPressed: () {
-              Navigator.pop(context); // Botón de retroceso
+              // Acción de notificaciones
             },
           ),
-          title: const Text(
-            'Registrar Produccion',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold, // Texto en negrita
-              color: Colors.black, // Texto en color negro
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.black), // Ícono de notificaciones negro
-              onPressed: () {
-                // Acción de notificaciones
-              },
-            ),
-          ],
-        ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Text("Animal ID: ${widget.animalId}"),
-                    const SizedBox(height: 16),
-
-                    // Ingreso de litros producidos
-                    TextFormField(
-                      controller: _litrosController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: "Litros producidos",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Campo requerido";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Debe ser un número";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Comentario
-                    TextFormField(
-                      controller: _comentarioController,
-                      maxLines: 4,
-                      decoration: const InputDecoration(
-                        labelText: "Comentario",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Campo requerido" : null,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Fecha
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _pickDate,
-                          child: const Text("Seleccionar fecha",
-                          style: TextStyle(color: themeColor),),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style:ElevatedButton.styleFrom(
-                          backgroundColor: themeColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-
-                        ),
-                        onPressed: _submitForm,
-                        child: const Text("Registrar",
-                        style:  TextStyle(color: Colors.white
-                        ),
-                        ) ,
-                      ),
-                    ),
-                  ],
+        ],
+      ),
+      body: Stack(
+        children: [
+          // Fondo con el logo con opacidad
+          Positioned.fill(
+            child: IgnorePointer(  // Evita que el fondo interfiera con la interacción
+              child: Center(
+                child: Opacity(
+                  opacity: 0.06,  // Opacidad baja
+                  child: Image.asset(
+                    'assets/images/logoecuaranch.png',  // Ruta de la imagen
+                    width: 250,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
+            ),
+          ),
+          // Cuerpo principal con el formulario
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  //Text("Animal ID: ${widget.animalId}"),
+                  //const SizedBox(height: 16),
+                  // Fecha
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Fecha: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _pickDate,
+                        child: const Text("Seleccionar fecha",
+                          style: TextStyle(color: themeColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Ingreso de litros producidos
+                  TextFormField(
+                    controller: _litrosController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Litros producidos",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Campo requerido";
+                      }
+                      if (int.tryParse(value) == null) {
+                        return "Debe ser un número";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Comentario
+                  TextFormField(
+                    controller: _comentarioController,
+                    maxLines: 4,
+                    decoration: const InputDecoration(
+                      labelText: "Comentario",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value == null || value.isEmpty ? "Campo requerido" : null,
+                  ),
+
+
+                  const Spacer(),
+
+                  // Botón registrar
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeColor,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: _submitForm,
+                      child: const Text(
+                        "Registrar",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
