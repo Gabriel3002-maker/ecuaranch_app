@@ -168,9 +168,25 @@ class _RegisterStableViewState extends State<RegisterStableView> {
               key: _formKey,
               child: ListView(
                 children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          DateFormat('yyyy-MM-dd').format(_selectedDate),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: _pickDate,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
                   TextFormField(
                     controller: _nameController,
-                    decoration: _customInputDecoration('Nombre'),
+                    decoration: _customInputDecoration('Nombre del Establo - Dedicacion'),
                     validator: (value) => value == null || value.isEmpty ? 'Ingrese un nombre' : null,
                   ),
                   const SizedBox(height: 16),
@@ -202,33 +218,35 @@ class _RegisterStableViewState extends State<RegisterStableView> {
                     ),
                   const SizedBox(height: 16),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          DateFormat('yyyy-MM-dd').format(_selectedDate),
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: _pickDate,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
 
                   Center(
                     child: ElevatedButton.icon(
                       onPressed: _takePhoto,
-                      icon: const Icon(Icons.camera_alt, color: Colors.white),
-                      label: const Text("Tomar Foto", style: TextStyle(color: Colors.white)),
+                      icon: const Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                        size: 28, // Aumentamos el tamaño del ícono para mayor visibilidad
+                      ),
+                      label: const Text(
+                        "Tomar o seleccionar foto",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16, // Aumentamos el tamaño de la fuente para mejor legibilidad
+                          fontWeight: FontWeight.w600, // Un peso de fuente un poco más fuerte
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0A5A57),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), // Ajustamos el padding para mejor balance
+                        elevation: 5, // Añadimos un poco de sombra para darle más profundidad
+                        shadowColor: Colors.black.withOpacity(0.3), // Ajustamos el color de la sombra
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16),
 
                   if (imageBytes != null)

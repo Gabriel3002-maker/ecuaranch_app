@@ -43,7 +43,7 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/logoecuaranch.png"
+  image_path: "assets/icons/logo_launcher.png"
 
 flutter_native_splash:
   background_image: assets/icons/fondo.png

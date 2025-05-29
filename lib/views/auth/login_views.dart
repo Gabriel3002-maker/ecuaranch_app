@@ -3,16 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../dashboard/main_tab_views.dart';
 
-class LoginScreen extends StatelessWidget {
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool _isPasswordVisible = false; // Variable para manejar la visibilidad de la contraseña
+
+  final usernameController = TextEditingController(); // Mantén el controlador para el usuario
+  final passwordController = TextEditingController(); // Mantén el controlador para la contraseña
+
+  @override
+  void dispose() {
+    // Asegúrate de limpiar los controladores cuando se cierre la pantalla
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     const themeColor = Color(0xFF0A5A57);
     const labelColor = Color(0xFFA2A2A7);
-
-    final usernameController = TextEditingController();
-    final passwordController = TextEditingController();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -54,7 +70,7 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 8),
 
               TextField(
-                controller: usernameController,
+                controller: usernameController, // No hay cambio aquí
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -76,14 +92,27 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 8),
 
               TextField(
-                controller: passwordController,
-                obscureText: true,
+                controller: passwordController, // Mantén el controlador para la contraseña
+                obscureText: !_isPasswordVisible, // Cambiar la visibilidad de la contraseña
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   filled: true,
                   fillColor: Colors.white,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off, // Cambia entre visibilidad y ocultación
+                      color: labelColor,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible; // Alterna la visibilidad
+                      });
+                    },
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
